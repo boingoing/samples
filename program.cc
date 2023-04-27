@@ -26,6 +26,8 @@ struct ThreadAction {
 std::array<std::queue<ThreadAction>, THREAD_COUNT> thread_queues;
 std::mutex thread_queues_mutex;
 
+// Send |value| to |node_id_dest|.
+// Blocks until destination has a matching Recv() call pending.
 void Send(int node_id_dest, int value, int node_id_source) {
   // Enqueue the Send action into our queue.
   {
@@ -54,6 +56,8 @@ void Send(int node_id_dest, int value, int node_id_source) {
   }
 }
 
+// Receive a value from |node_id_source|.
+// Blocks until source has a matching Send() call pending.
 int Recv(int node_id_source, int node_id_dest) {
   // Enqueue the Recv action into our queue.
   {
@@ -85,6 +89,8 @@ int Recv(int node_id_source, int node_id_dest) {
   }
 }
 
+// Compute the sum of the values of all nodes (threads) using only the
+// Send() and Recv() methods defined above.
 int GetSum(int node_count, int my_node_id, int my_value) {
   int sum = my_value;
   // Start at 2^0
@@ -130,14 +136,10 @@ int GetSum(int node_count, int my_node_id, int my_value) {
 
 int main() {
   std::vector<std::thread> threads;
-  threads.emplace_back(GetSum, 8, 0, 1);
-  threads.emplace_back(GetSum, 8, 1, 1);
-  threads.emplace_back(GetSum, 8, 2, 1);
-  threads.emplace_back(GetSum, 8, 3, 1);
-  threads.emplace_back(GetSum, 8, 4, 1);
-  threads.emplace_back(GetSum, 8, 5, 1);
-  threads.emplace_back(GetSum, 8, 6, 1);
-  threads.emplace_back(GetSum, 8, 7, 1);
+  for (int i = 0; i < THREAD_COUNT; i++) {
+    // All threads have value 1?
+    threads.emplace_back(GetSum, THREAD_COUNT, i, 1);
+  }
 
   for (auto& thread : threads) {
     thread.join();
