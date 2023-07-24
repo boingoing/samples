@@ -24,6 +24,9 @@ add_executable (node_get_sum ${NODE_GET_SUM_SOURCES})
 set (UDP_BUFFER_SOURCES ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 
+set (COUNT_ISLANDS_SOURCES ${PROJECT_SOURCE_DIR}/src/count_islands.cc)
+add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
+
 if (MSVC)
   # disable some benign warnings on MSVC
   add_compile_options ("/Wall;/wd4514;/wd4625;/wd4626;/wd5026;/wd5027;/wd5045;/wd4710;/wd4820;")
