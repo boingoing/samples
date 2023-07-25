@@ -9,44 +9,48 @@
 
 #include "test_islands.h"
 
+#define VERBOSE_DEBUG 1
+
 #define island_type_small char
+#define island_type_large uint32_t
 
-const char water = '0';
-const char land = '1';
+const island_type_small water = '0';
+const island_type_small land = '1';
 
-char get_left(std::vector<std::vector<char>>& grid, size_t x, size_t y) {
+template<typename island_type>
+island_type get_left(std::vector<std::vector<island_type>>& grid, size_t x, size_t y) {
   if (x == 0) {
     return water;
   }
   return grid[x-1][y];
 }
 
-char get_right(std::vector<std::vector<char>>& grid, size_t x, size_t y) {
-  if (x == grid.size() - 1) {
-    return water;
-  }
-  return grid[x+1][y];
-}
-
-char get_above(std::vector<std::vector<char>>& grid, size_t x, size_t y) {
+template<typename island_type>
+island_type get_above(std::vector<std::vector<island_type>>& grid, size_t x, size_t y) {
   if (y == 0) {
     return water;
   }
   return grid[x][y-1];
 }
 
-char get_below(std::vector<std::vector<char>>& grid, size_t x, size_t y) {
-  if (y == grid[0].size() - 1) {
-    return water;
-  }
-  return grid[x][y+1];
-}
-
-int32_t island_to_int(char island_id) {
+template<typename island_type>
+int32_t island_to_int(island_type island_id) {
   return static_cast<int32_t>(island_id - water);
 }
 
-void print_grid(std::vector<std::vector<char>>& grid) {
+template<typename island_type>
+void print_equivalent_map(std::map<island_type, std::unordered_set<island_type>>& equivalent_island_map) {
+  for (const auto& map_pair : equivalent_island_map) {
+    std::cout << island_to_int(map_pair.first) << " -> [ ";
+    for (const auto& eq_id : map_pair.second) {
+      std::cout << island_to_int(eq_id) << ", ";
+    }
+    std::cout << "]" << std::endl;
+  }
+}
+
+template<typename island_type>
+void print_grid(std::vector<std::vector<island_type>>& grid) {
   for (size_t x = 0; x < grid.size(); x++) {
     for (size_t y = 0; y < grid[x].size(); y++) {
       std::cout << std::setw(3) << island_to_int(grid[x][y]) << " ";
@@ -55,13 +59,15 @@ void print_grid(std::vector<std::vector<char>>& grid) {
   }
 }
 
-// Returns the numver of island chunks isolated.
-// Equivalent chunks, that is, chunks which are connected and, thus, part of a
-// larger island are indicated via |equivalent_island_map|.
-void isolate_island_chunks(std::vector<std::vector<char>>& grid, std::map<char, std::unordered_set<char>>& equivalent_island_map) {
-  const char first_isolated_island = land;
+// Modifies the grid to mark each identified island chunk with a unique id.
+// Equivalent chunks, that is, chunks with different ids which are connected
+// and, thus, part of a larger island are indicated via |equivalent_island_map|.
+template<typename island_type>
+void isolate_island_chunks(std::vector<std::vector<island_type>>& grid,
+    std::map<island_type, std::unordered_set<island_type>>& equivalent_island_map) {
+  const island_type first_isolated_island = land;
   // Which value should we use to mark the next found island.
-  char next_island = first_isolated_island;
+  island_type next_island = first_isolated_island;
 
   // Walk over the grid one row at a time starting from the top left tile.
   for (size_t x = 0; x < grid.size(); x++) {
@@ -99,8 +105,6 @@ void isolate_island_chunks(std::vector<std::vector<char>>& grid, std::map<char, 
           grid[x][y] = left_tile;
           //    We need to remember that the two chunks are part of the same
           //    island.
-          //    Keep a mapping from the smaller index to the larger index - the
-          //    larger one will be the effective id for the island.
           equivalent_island_map[left_tile].insert(above_tile);
           equivalent_island_map[above_tile].insert(left_tile);
         }
@@ -109,30 +113,82 @@ void isolate_island_chunks(std::vector<std::vector<char>>& grid, std::map<char, 
   }
 }
 
-void merge_equivalent_island_map(std::map<char, std::unordered_set<char>>& equivalent_island_map) {
+// The equivalent island map is a set of island chunks which are part of the
+// same, connected island but have different island ids.
+// During island chunk isolation, we inserted mappings between equivalent chunks
+// but we need to process that set of mappings so that we can know which chunks
+// make up each unique island.
+template<typename island_type>
+void merge_equivalent_island_map(std::map<island_type, std::unordered_set<island_type>>& equivalent_island_map) {
+  // We have all the equivalent mappings discovered by walking the grid.
+  // But these are all just mappings between two island chunks at the point
+  // where they connect.
+  // Effectively, these act as a list allowing us to find all the island chunks
+  // belonging to each island.
+  // Consider this grid:
+  // [ [ "1", "0", "1", "1", "0", "1" ],
+  //   [ "1", "0", "0", "1", "1", "1" ],
+  //   [ "1", "1", "1", "1", "0", "0" ] ]
+  // We would isolate that into these island chunks:
+  // [ [ "1", "0", "2", "2",  "0", "3"  ],
+  //   [ "1", "0", "0", "2",  "2", "2*" ],
+  //   [ "1", "1", "1", "1*", "0", "0"  ] ]
+  // While isolating, we would identify two places where island chunks connect:
+  // Tile marked "1*" connects chunk 1 and chunk 2.
+  // Tile marked "2*" connects chunk 2 and chunk 3.
+  // The equivalent island map would look like this:
+  // "1" -> [ "1", "2" ]
+  // "2" -> [ "2", "1" ]
+  // "3" -> [ "3", "2" ]
+  // In reality, there is only one island in this grid but there is no direct
+  // mapping from "1" -> "3" however we can discover this mapping by walking
+  // the map and merging entries down.
+  // When we're done, the equivalent map will look like this:
+  // "1" -> [ "1", "2", "3" ]
+  // "2" -> []
+  // "3" -> []
   for (auto& map_pair : equivalent_island_map) {
+    // To which island chunk does the set of mappings belong?
     const auto to_id = map_pair.first;
-    std::stack<char> working_set;
+    // Push all the equivalent island chunks of |to_id| onto a stack.
+    std::stack<island_type> working_set;
     for (const auto& from_id : map_pair.second) {
       working_set.push(from_id);
     }
+    // Process entries off of the stack until it's empty.
     while (!working_set.empty()) {
       const auto& from_id = working_set.top();
       working_set.pop();
+      // Skip any mappings back to |to_id|, that would cause a loop.
       if (to_id == from_id) {
         continue;
       }
+      // Get the set of equivalent island chunks for |from_id|.
       auto& equivalent_set = equivalent_island_map[from_id];
       for (const auto& nested_id : equivalent_set) {
+        // And for each chunk id, add it into the equivalent set for |to_id|.
         map_pair.second.insert(nested_id);
+        // Push the id onto the stack so we will recursively walk the
+        // equivalent set for that id.
         working_set.push(nested_id);
       }
+      // We know that |from_id| is part of the same island as |to_id| and we
+      // added all the equivalent chunk ids from |from_id| to the set for
+      // |to_id|.
+      // Now, delete the equivalent mappings for |from_id| so we don't further
+      // process them.
+      // Note: This will remove the self-equivalence mapping ("2" -> [ "2" ])
+      //       too. This is how we will identify unique islands - they will not
+      //       have an empty equivalence map.
       equivalent_set.clear();
     }
   }
 }
 
-size_t count_unique_islands(std::map<char, std::unordered_set<char>>& equivalent_island_map) {
+// Search the equivalent island map for island chunks which do not have an empty
+// equivalence map. These are the unique islands.
+template<typename island_type>
+size_t count_unique_islands(std::map<island_type, std::unordered_set<island_type>>& equivalent_island_map) {
   size_t count = 0;
   for (const auto& map_pair : equivalent_island_map) {
     if (!map_pair.second.empty()) {
@@ -142,32 +198,69 @@ size_t count_unique_islands(std::map<char, std::unordered_set<char>>& equivalent
   return count;
 }
 
-size_t count_islands(std::vector<std::vector<char>>& grid) {
+// Count the number of islands located in a grid of '0' and '1' characters.
+// Only consider two tiles of the grid connected if they are 4-connected,
+// via left, right, above, or below.
+// Perform island chunk isolation, merge the equivalent island map, and return
+// the count of unique islands.
+template<typename island_type>
+size_t count_islands(std::vector<std::vector<island_type>>& grid) {
   // If we locate an island multiple times as different chunks,
   // map the chunks to each other.
-  std::map<char, std::unordered_set<char>> equivalent_island_map;
+  std::map<island_type, std::unordered_set<island_type>> equivalent_island_map;
+
+#if VERBOSE_DEBUG
+  std::cout << std::endl << "Searching for islands in grid:" << std::endl;
+  print_grid(grid);
+#endif
 
   isolate_island_chunks(grid, equivalent_island_map);
+
+#if VERBOSE_DEBUG
+  std::cout << std::endl << "Found island chunks:" << std::endl;
+  print_grid(grid);
+
+  std::cout << std::endl << "Equivalent island mapping:" << std::endl;
+  print_equivalent_map(equivalent_island_map);
+#endif
+
   merge_equivalent_island_map(equivalent_island_map);
+
+#if VERBOSE_DEBUG
+  std::cout << std::endl << "Merged equivalent island mapping:" << std::endl;
+  print_equivalent_map(equivalent_island_map);
+#endif
+
   return count_unique_islands(equivalent_island_map);
 }
 
-void test_one_grid(std::vector<std::vector<char>> grid, size_t expected_count) {
-  std::cout << "Searching for islands in grid:" << std::endl;
-  print_grid(grid);
-
-  std::cout << std::endl << "Isolating islands..." << std::endl;
+template<typename island_type>
+void test_one_grid(std::vector<std::vector<island_type>> grid, size_t expected_count) {
   const auto count = count_islands(grid);
-  std::cout << std::endl << "Found islands:" << std::endl;
-  print_grid(grid);
-
   std::cout << std::endl << "Found " << count << " islands (expected " << expected_count << ")." << std::endl;
   std::cout << ((count == expected_count) ? "PASSED!" : "FAILED!") << std::endl;
 }
 
+// If there are going to be more island chunks than can be held in a char (island_type_small), expand
+// the elements of the grid vector.
+std::vector<std::vector<island_type_large>> convert_grid_to_large_id(std::vector<std::vector<island_type_small>>& grid) {
+  std::vector<std::vector<island_type_large>> large_grid;
+
+  large_grid.resize(grid.size());
+  auto iter = large_grid.begin();
+  for (const auto& row : grid) {
+    (*iter).assign(row.begin(), row.end());
+    iter++;
+  }
+
+  return large_grid;
+}
+
 int main() {
+  auto huge_grid = get_huge_grid();
+  test_one_grid(convert_grid_to_large_id(huge_grid), 6121);
+
   test_one_grid(get_simple_grid(), 5);
   test_one_grid(get_medium_complexity_grid(), 2);
   test_one_grid(get_complex_grid(), 1);
-  test_one_grid(get_huge_grid(), 6121);
 }
