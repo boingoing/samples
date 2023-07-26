@@ -27,6 +27,9 @@ add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 set (COUNT_ISLANDS_SOURCES ${PROJECT_SOURCE_DIR}/src/count_islands.cc)
 add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
 
+set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc)
+add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
+
 if (MSVC)
   # disable some benign warnings on MSVC
   add_compile_options ("/Wall;/wd4514;/wd4625;/wd4626;/wd5026;/wd5027;/wd5045;/wd4710;/wd4820;")
