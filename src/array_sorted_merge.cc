@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "array_sorted_merge.h"
 #include "helpers.h"
 
 // Takes two sorted arrays and merges them.
@@ -41,7 +42,7 @@ void merge(std::vector<int>& nums1, int m, std::vector<int>& nums2, int n) {
   }
 }
 
-void test(std::vector<int> nums1, int m, std::vector<int> nums2, int n, std::vector<int> expected) {
+void test_merge(std::vector<int> nums1, int m, std::vector<int> nums2, int n, std::vector<int> expected) {
   std::cout << std::endl << "Merging two sorted arrays:" << std::endl;
   std::cout << "nums1 = ";
   print_vector(nums1);
@@ -53,7 +54,8 @@ void test(std::vector<int> nums1, int m, std::vector<int> nums2, int n, std::vec
   print_vector(nums1);
 }
 
-int main() {
-  test({1,2,3,0,0,0}, 3, {2,5,6}, 3, {1,2,2,3,4,5});
-  test({0}, 0, {1}, 1, {1});
+int main_merge() {
+  test_merge({1,2,3,0,0,0}, 3, {2,5,6}, 3, {1,2,2,3,4,5});
+  test_merge({0}, 0, {1}, 1, {1});
+  return 0;
 }

@@ -27,7 +27,9 @@ add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 set (COUNT_ISLANDS_SOURCES ${PROJECT_SOURCE_DIR}/src/count_islands.cc)
 add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
 
-set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc)
+set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_remove_element.cc
+  ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc
+  ${PROJECT_SOURCE_DIR}/src/array_stuff.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
 
 if (MSVC)
