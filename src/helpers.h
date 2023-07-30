@@ -4,7 +4,7 @@
 #define __helpers_h__
 
 template<typename t>
-void print_vector(std::vector<t>& v) {
+void print_vector(const std::vector<t>& v) {
   bool is_first = true;
   std::cout << "[ ";
   for (const auto& value : v) {
