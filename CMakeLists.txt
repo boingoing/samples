@@ -29,6 +29,7 @@ add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
 
 set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_shift.cc
   ${PROJECT_SOURCE_DIR}/src/array_majority_element.cc
+  ${PROJECT_SOURCE_DIR}/src/array_max_delta.cc
   ${PROJECT_SOURCE_DIR}/src/array_remove_duplicates.cc
   ${PROJECT_SOURCE_DIR}/src/array_remove_element.cc
   ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc
