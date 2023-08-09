@@ -1,3 +1,4 @@
+#include "array_jump_game.h"
 #include "array_shift.h"
 #include "array_majority_element.h"
 #include "array_max_delta.h"
@@ -12,6 +13,7 @@ int main() {
   main_array_majority_element();
   main_array_shift();
   main_max_delta();
+  main_jump_game();
 
   return 0;
 }
