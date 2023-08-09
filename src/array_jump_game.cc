@@ -49,6 +49,36 @@ bool can_solve(std::vector<int>& nums) {
   return current_steps == 0;
 }
 
+// Find the minimum number of jumps needed to move from the first element to the
+// last element in |nums|.
+// This is leetcode 45. Jump Game II
+// https://leetcode.com/problems/jump-game-ii
+int min_jumps(std::vector<int>& nums) {
+  int jump_count = 0;
+  size_t current_index = 0;
+  // Walk forward over the elements in |nums|.
+  // For each element, jump to the potential next position which is able to
+  // reach the farthest forward in the array.
+  while (current_index != nums.size() - 1) {
+    size_t max_jump_value = 0;
+    size_t max_jump_index = 0;
+    for (size_t i = 0; i < nums[current_index]; i++) {
+      size_t potential_target_index = current_index + i + 1;
+      size_t jump_value = nums[potential_target_index] + potential_target_index;
+      if (potential_target_index == nums.size() - 1) {
+        return jump_count + 1;
+      }
+      if (jump_value >= max_jump_value) {
+        max_jump_value = jump_value;
+        max_jump_index = potential_target_index;
+      }
+    }
+    jump_count++;
+    current_index = max_jump_index;
+  }
+  return jump_count;
+}
+
 void test_can_solve(std::vector<int> nums, bool expected) {
   std::cout << std::endl << "Looking to see if this jump game is solvable:" << std::endl;
   print_vector(nums);
@@ -57,9 +87,22 @@ void test_can_solve(std::vector<int> nums, bool expected) {
   std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
 }
 
+void test_min_jumps(std::vector<int> nums, int expected) {
+  std::cout << std::endl << "Finding the minimum number of jumps to solve this jump game:" << std::endl;
+  print_vector(nums);
+
+  const auto actual = min_jumps(nums);
+  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
+}
+
 int main_jump_game() {
   test_can_solve({2,3,1,1,4}, true);
   test_can_solve({3,2,1,0,4}, false);
+
+  test_min_jumps({5,3,1,1,1,1,4}, 2);
+  test_min_jumps({2,3,1,1,4}, 2);
+  test_min_jumps({2,3,0,1,4}, 2);
+  test_min_jumps({1,2,3}, 2);
 
   return 0;
 }
