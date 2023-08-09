@@ -11,6 +11,8 @@
 // Given an array, |nums|, shift the elements in the array right |k| times.
 // Elements at the end of the array wrap-around to the front when shifted.
 // ex: [1,2,3,4,5,6] shifted right by 2 is [5,6,1,2,3,4]
+// This is leetcode 189. Rotate Array
+// https://leetcode.com/problems/rotate-array
 void array_shift_right(std::vector<int>& nums, int k) {
   // Allow for shift sizes greater than nums.size()
   k = k % nums.size();

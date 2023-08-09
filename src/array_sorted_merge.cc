@@ -13,7 +13,9 @@
 // Takes two sorted arrays and merges them.
 // |nums1| must have |n| elements at the back of the vector with value 0.
 // The elements from |nums2| will be sorted into |nums1| using up those
-// extra element slots. 
+// extra element slots.
+// This is leetcode 88. Merge Sorted Array
+// https://leetcode.com/problems/merge-sorted-array/
 void merge(std::vector<int>& nums1, int m, std::vector<int>& nums2, int n) {
   // Start at the back of nums1, move the bigger elements from nums1 and nums2 to the back.
   int current_insert_point = m + n - 1;

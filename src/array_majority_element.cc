@@ -21,6 +21,8 @@ void get_element_count_map(const std::vector<int>& nums, std::map<int, int>& ele
 // Majority element is defined as the element which occurs more than
 // nums.size() / 2 times in the array.
 // Assumes a majority element is present in |nums|.
+// This is leetcode 169. Majority Element
+// https://leetcode.com/problems/majority-element
 int array_majority_element(std::vector<int>& nums) {
   std::map<int, int> element_count_map;
   get_element_count_map(nums, element_count_map);
@@ -39,6 +41,8 @@ int array_majority_element(std::vector<int>& nums) {
 // Given an array |nums|, return the set of majority elements.
 // Majority element is defined as any element which occurs more than
 // nums.size() / 3 times in the array.
+// This is leetcode 229. Majority Element II
+// https://leetcode.com/problems/majority-element-ii/
 std::vector<int> array_majority_elements(std::vector<int>& nums) {
   std::map<int, int> element_count_map;
   get_element_count_map(nums, element_count_map);

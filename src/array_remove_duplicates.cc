@@ -10,6 +10,8 @@
 // Given a sorted array |nums|, remove duplicates from it.
 // Remaining values are left in the same order.
 // Return the number of unique values in |nums|.
+// This is leetcode 26. Remove Duplicates from Sorted Array
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array
 int sorted_array_remove_all_duplicates(std::vector<int>& nums) {
   // Track previous starting at the first element.
   size_t previous_index = 0;
@@ -62,6 +64,8 @@ int sorted_array_remove_all_duplicates(std::vector<int>& nums) {
 // 2 duplicates of each value.
 // Remaining values are left in the same order.
 // Return the number of elements in |nums|.
+// This is leetcode 80. Remove Duplicates from Sorted Array II
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
 int sorted_array_remove_all_but_2_duplicates(std::vector<int>& nums) {
   size_t previous_previous_index = 0;
   size_t previous_index = 1;

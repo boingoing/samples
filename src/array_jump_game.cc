@@ -19,7 +19,7 @@
 // from index 2 to index 3.
 // And, [2,1,0,3] is not solvable because there is no path from index 2 - which
 // is zero - to the last element, index 3.
-// This is leetcode #55. Jump Game
+// This is leetcode 55. Jump Game
 // https://leetcode.com/problems/jump-game
 bool can_solve(std::vector<int>& nums) {
   if (nums.size() < 2) {

@@ -10,6 +10,8 @@
 
 // Given an array |nums|, find the maximum delta between two
 // elements ei and ej where i < j.
+// This is leetcode 121. Best Time to Buy and Sell Stock
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock
 int array_max_delta(std::vector<int>& nums) {
   size_t min_element_index = 0;
   //size_t max_delta_element_index = 0;
@@ -43,6 +45,10 @@ enum class SearchState : uint8_t {
   FindMinValue,
 };
 
+// Given an array |nums|, find the sum of maximum deltas between two
+// elements ei and ej where i < j.
+// This is leetcode 122. Best Time to Buy and Sell Stock II
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii
 int array_max_delta_sum(std::vector<int>& nums) {
   if (nums.size() < 2) {
     return 0;

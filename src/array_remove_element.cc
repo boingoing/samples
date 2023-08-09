@@ -11,6 +11,8 @@
 // Remaining elements may be returned in any order.
 // The length of the |nums| vector does not change.
 // The number of remaining elements is returned.
+// This is leetcode 27. Remove Element
+// https://leetcode.com/problems/remove-element
 int remove(std::vector<int>& nums, int val) {
   // Start from the back and look at the elements of |nums| in reverse order.
   // When we find an element matching |val|, swap it with the last element in
