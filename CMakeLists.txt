@@ -27,7 +27,8 @@ add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 set (COUNT_ISLANDS_SOURCES ${PROJECT_SOURCE_DIR}/src/count_islands.cc)
 add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
 
-set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_jump_game.cc
+set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_h_index.cc
+  ${PROJECT_SOURCE_DIR}/src/array_jump_game.cc
   ${PROJECT_SOURCE_DIR}/src/array_shift.cc
   ${PROJECT_SOURCE_DIR}/src/array_majority_element.cc
   ${PROJECT_SOURCE_DIR}/src/array_max_delta.cc
