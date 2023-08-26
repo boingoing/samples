@@ -6,6 +6,7 @@
 #include "array_remove_element.h"
 #include "array_shift.h"
 #include "array_sorted_merge.h"
+#include "string_find_word_under_cursor.h"
 
 int main() {
   main_merge();
@@ -16,6 +17,7 @@ int main() {
   main_max_delta();
   main_jump_game();
   main_h_index();
+  main_word_under_cursor();
 
   return 0;
 }
