@@ -1,3 +1,4 @@
+#include "array_gas_stations.h"
 #include "array_h_index.h"
 #include "array_jump_game.h"
 #include "array_majority_element.h"
@@ -18,6 +19,7 @@ int main() {
   main_jump_game();
   main_h_index();
   main_word_under_cursor();
+  main_gas_stations();
 
   return 0;
 }
