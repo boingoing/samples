@@ -7,6 +7,7 @@
 #include "array_remove_element.h"
 #include "array_shift.h"
 #include "array_sorted_merge.h"
+#include "array_sudoku.h"
 #include "string_find_word_under_cursor.h"
 
 int main() {
@@ -20,6 +21,7 @@ int main() {
   main_h_index();
   main_word_under_cursor();
   main_gas_stations();
+  main_sudoku();
 
   return 0;
 }
