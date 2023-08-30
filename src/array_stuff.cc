@@ -3,6 +3,7 @@
 #include "array_jump_game.h"
 #include "array_majority_element.h"
 #include "array_max_delta.h"
+#include "array_min_rewards.h"
 #include "array_remove_duplicates.h"
 #include "array_remove_element.h"
 #include "array_shift.h"
@@ -22,6 +23,7 @@ int main() {
   main_word_under_cursor();
   main_gas_stations();
   main_sudoku();
+  main_min_rewards();
 
   return 0;
 }

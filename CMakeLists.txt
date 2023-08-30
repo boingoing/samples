@@ -33,6 +33,7 @@ set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
   ${PROJECT_SOURCE_DIR}/src/array_shift.cc
   ${PROJECT_SOURCE_DIR}/src/array_majority_element.cc
   ${PROJECT_SOURCE_DIR}/src/array_max_delta.cc
+  ${PROJECT_SOURCE_DIR}/src/array_min_rewards.cc
   ${PROJECT_SOURCE_DIR}/src/array_remove_duplicates.cc
   ${PROJECT_SOURCE_DIR}/src/array_remove_element.cc
   ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc
