@@ -10,6 +10,7 @@
 #include "array_shift.h"
 #include "array_sorted_merge.h"
 #include "array_sudoku.h"
+#include "hashmap_ransom.h"
 #include "string_find_word_under_cursor.h"
 
 int main() {
@@ -26,6 +27,7 @@ int main() {
   main_sudoku();
   main_min_rewards();
   main_rain();
+  main_ransom();
 
   return 0;
 }
