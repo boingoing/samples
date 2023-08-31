@@ -116,7 +116,7 @@ bool words_follow_pattern(std::string& pattern, std::string& str) {
 // Given two strings, |s| and |t|, determine if |t| is an anagram of |s|.
 // This is leetcode 242. Valid Anagram
 // https://leetcode.com/problems/valid-anagram
-bool is_anagram(std::string& s, std::string& t) {
+bool is_anagram(const std::string& s, const std::string& t) {
   if (s.size() != t.size()) {
     return false;
   }
@@ -143,6 +143,36 @@ bool is_anagram(std::string& s, std::string& t) {
   return true;
 }
 
+// Given a set of words, |strs|, group the words into sets of anagrams and return
+// those sets.
+// This is leetcode 49. Group Anagrams
+// https://leetcode.com/problems/group-anagrams
+std::vector<std::vector<std::string>> group_anagrams(std::vector<std::string>& strs) {
+  // A map of words to the bucket of anagrams.
+  std::unordered_map<std::string, std::vector<std::string>> word_to_bucket_map;
+
+  for (const auto& word : strs) {
+    bool found = false;
+    for (auto& map_pair : word_to_bucket_map) {
+      if (is_anagram(map_pair.first, word)) {
+        map_pair.second.push_back(word);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      word_to_bucket_map[word].push_back(word);
+    }
+  }
+
+  std::vector<std::vector<std::string>> groups;
+  for (auto& map_pair : word_to_bucket_map) {
+    groups.push_back(map_pair.second);
+  }
+
+  return groups;
+}
+
 void test_are_isomorphic(std::string s, std::string t, bool expected) {
   std::cout << std::endl << "Looking to see if \"" << s << "\" and \"" << t << "\" are isomorphic" << std::endl;
 
@@ -162,6 +192,22 @@ void test_is_anagram(std::string s, std::string t, bool expected) {
 
   const auto actual = is_anagram(s, t);
   std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
+}
+
+void test_group_anagrams(std::vector<std::string> strs, std::vector<std::vector<std::string>> expected) {
+  std::cout << std::endl << "Attempting to group anagrams in this set of strings:" << std::endl;
+  print_vector(strs);
+
+  const auto actual = group_anagrams(strs);
+  std::cout << "Found:" << std::endl;
+  for (const auto& v : actual) {
+    print_vector(v);
+  }
+
+   std::cout << "Expected:" << std::endl;
+  for (const auto& v : expected) {
+    print_vector(v);
+  }
 }
 
 int main_hashmap_strings() {
@@ -186,6 +232,10 @@ int main_hashmap_strings() {
   test_is_anagram("anagram", "nagaram", true);
   test_is_anagram("rat", "car", false);
   test_is_anagram("ab", "b", false);
+
+  test_group_anagrams({"eat","tea","tan","ate","nat","bat"}, {{"bat"},{"nat","tan"},{"ate","eat","tea"}});
+  test_group_anagrams({""}, {{}});
+  test_group_anagrams({"a"}, {{"a"}});
 
   return 0;
 }
