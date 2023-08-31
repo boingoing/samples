@@ -4,6 +4,7 @@
 #include "array_majority_element.h"
 #include "array_max_delta.h"
 #include "array_min_rewards.h"
+#include "array_rain.h"
 #include "array_remove_duplicates.h"
 #include "array_remove_element.h"
 #include "array_shift.h"
@@ -24,6 +25,7 @@ int main() {
   main_gas_stations();
   main_sudoku();
   main_min_rewards();
+  main_rain();
 
   return 0;
 }
