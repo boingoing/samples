@@ -113,6 +113,36 @@ bool words_follow_pattern(std::string& pattern, std::string& str) {
   return str_index >= str.size();
 }
 
+// Given two strings, |s| and |t|, determine if |t| is an anagram of |s|.
+// This is leetcode 242. Valid Anagram
+// https://leetcode.com/problems/valid-anagram
+bool is_anagram(std::string& s, std::string& t) {
+  if (s.size() != t.size()) {
+    return false;
+  }
+
+  // Mapping from a letter in |s| to the count of occurences of that letter
+  // in |s|.
+  std::unordered_map<char, int> letter_to_count_map;
+
+  // Construct the mapping.
+  for (const auto& letter : s) {
+    letter_to_count_map[letter]++;
+  }
+
+  // Walk over the letters in |t| and decrement the counter for that letter
+  // in the map.
+  // If that makes the counter negative for any letter, |t| cannot be an
+  // anagram.
+  for (const auto& letter : t) {
+    if (--letter_to_count_map[letter] < 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 void test_are_isomorphic(std::string s, std::string t, bool expected) {
   std::cout << std::endl << "Looking to see if \"" << s << "\" and \"" << t << "\" are isomorphic" << std::endl;
 
@@ -124,6 +154,13 @@ void test_words_follow_pattern(std::string pattern, std::string str, bool expect
   std::cout << std::endl << "Looking to see if \"" << str << "\" follows the pattern \"" << pattern << "\"" << std::endl;
 
   const auto actual = words_follow_pattern(pattern, str);
+  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
+}
+
+void test_is_anagram(std::string s, std::string t, bool expected) {
+  std::cout << std::endl << "Looking to see if \"" << t << "\" is an anagram of \"" << s << "\"" << std::endl;
+
+  const auto actual = is_anagram(s, t);
   std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
 }
 
@@ -145,6 +182,10 @@ int main_hashmap_strings() {
   test_words_follow_pattern("aa", "foo foo foo", false);
   test_words_follow_pattern("aa", "foo foo bar", false);
   test_words_follow_pattern("aaaa", "foo", false);
+
+  test_is_anagram("anagram", "nagaram", true);
+  test_is_anagram("rat", "car", false);
+  test_is_anagram("ab", "b", false);
 
   return 0;
 }
