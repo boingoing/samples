@@ -11,6 +11,7 @@
 #include "array_sorted_merge.h"
 #include "array_sudoku.h"
 #include "array_two_sum.h"
+#include "hashmap_happy_number.h"
 #include "hashmap_ransom.h"
 #include "hashmap_strings.h"
 #include "string_find_word_under_cursor.h"
@@ -32,6 +33,7 @@ int main() {
   main_ransom();
   main_hashmap_strings();
   main_two_sum();
+  main_happy_number();
 
   return 0;
 }
