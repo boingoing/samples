@@ -7,6 +7,7 @@
 #include "array_rain.h"
 #include "array_remove_duplicates.h"
 #include "array_remove_element.h"
+#include "array_search.h"
 #include "array_shift.h"
 #include "array_sorted_merge.h"
 #include "array_sudoku.h"
@@ -34,6 +35,7 @@ int main() {
   main_hashmap_strings();
   main_two_sum();
   main_happy_number();
+  main_array_search();
 
   return 0;
 }
