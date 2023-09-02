@@ -54,7 +54,7 @@ std::string redis(std::string cmd) {
     return iter->second;
   } else if (operation == "set") {
     const auto key = next_word(cmd, ++cur_index);
-    const auto value = cmd.substr(++cur_index, cmd.size() - 1 - cur_index);
+    const auto value = cmd.substr(cur_index + 1, cmd.size() - 1 - cur_index);
     key_value_store[key] = value;
     return "OK";
   } else if (operation == "del") {
@@ -81,7 +81,7 @@ std::string redis(std::string cmd) {
   } else if (operation == "hset") {
     const auto key = next_word(cmd, ++cur_index);
     const auto field = next_word(cmd, ++cur_index);
-    const auto value = cmd.substr(++cur_index, cmd.size() - 1 - cur_index);
+    const auto value = cmd.substr(cur_index + 1, cmd.size() - 1 - cur_index);
     const auto& iter = key_field_value_store.find(key);
     if (iter == key_field_value_store.end()) {
       key_field_value_store[key][field] = value;
