@@ -15,6 +15,7 @@
 #include "array_two_sum.h"
 #include "hashmap_happy_number.h"
 #include "hashmap_ransom.h"
+#include "hashmap_redis.h"
 #include "hashmap_strings.h"
 #include "string_find_word_under_cursor.h"
 
@@ -38,6 +39,7 @@ int main() {
   main_happy_number();
   main_array_search();
   main_maze();
+  main_redis();
 
   return 0;
 }

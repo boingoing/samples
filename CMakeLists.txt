@@ -45,6 +45,7 @@ set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_happy_number.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_ransom.cc
+  ${PROJECT_SOURCE_DIR}/src/hashmap_redis.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
