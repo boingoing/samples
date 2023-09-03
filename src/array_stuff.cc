@@ -1,3 +1,4 @@
+#include "array_combinations.h"
 #include "array_gas_stations.h"
 #include "array_h_index.h"
 #include "array_jump_game.h"
@@ -40,6 +41,7 @@ int main() {
   main_array_search();
   main_maze();
   main_redis();
+  main_combinations();
 
   return 0;
 }
