@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <unordered_map>
 
 #include "hashmap_cache.h"
@@ -42,19 +43,16 @@ class SetAssociativeCache {
   using SlotContainer = SlotContainer<KeyType, ValueType>;
   using Slot = Slot<KeyType, ValueType>;
 
-  size_t num_sets_ = 4;
-  size_t num_slots_ = 5;
+  size_t num_sets_;
+  size_t num_slots_;
   std::vector<SlotContainer> slots_;
   ReplacementAlgorithm replacement_algorithm_;
+  std::mutex slot_mutex_;
 
  public:
-  SetAssociativeCache() {
-    Reallocate();
-  }
+  SetAssociativeCache() = delete;
 
-  SetAssociativeCache(size_t num_sets, size_t num_slots) {
-    num_sets_ = num_sets;
-    num_slots_ = num_slots;
+  SetAssociativeCache(size_t num_sets, size_t num_slots) : num_sets_(num_sets), num_slots_(num_slots) {
     Reallocate();
   }
 
@@ -62,6 +60,7 @@ class SetAssociativeCache {
 
   void Set(KeyType key, ValueType value) {
     const auto set_index = HashToSet(key);
+    std::lock_guard guard(slot_mutex_);
     auto& container = slots_[set_index];
 
     std::cout << "Attempting to set key \"" << key << "\" => \"" << value << "\" in bucket " << set_index << "..." << std::endl;
@@ -118,6 +117,7 @@ class SetAssociativeCache {
 
  private:
   void Reallocate() {
+    std::lock_guard guard(slot_mutex_);
     slots_.resize(num_sets_);
   }
 
@@ -129,7 +129,7 @@ class SetAssociativeCache {
 int main_cache() {
   std::cout << std::endl << "Testing SetAssociativeCache..." << std::endl;
 
-  SetAssociativeCache<int, int> cache;
+  SetAssociativeCache<int, int> cache(4,5);
   cache.Set(1, 2);
   cache.Set(5, 3);
   cache.Set(9, 4);
