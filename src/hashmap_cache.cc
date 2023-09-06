@@ -113,6 +113,18 @@ class SetAssociativeCache {
   }
 
   void Print() {
+    for (size_t i = 0; i < slots_.size(); i++) {
+      std::cout << "Set " << i << " = [ ";
+      const auto& container = slots_[i];
+      for (size_t j = 0; j < container.size(); j++) {
+        const auto& slot = container[j];
+        if (j != 0) {
+          std::cout << "| ";
+        }
+        std::cout << slot.key << " => " << slot.value << " ";
+      }
+      std::cout << "]" << std::endl;
+    }
   }
 
  private:
@@ -137,6 +149,7 @@ int main_cache() {
   cache.Set(17, 6);
   cache.Set(21, 7);
   cache.Set(9, 8);
+  cache.Print();
 
   return 0;
 }
