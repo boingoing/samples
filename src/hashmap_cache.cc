@@ -10,22 +10,42 @@
 #include "helpers.h"
 
 template <typename KeyType, typename ValueType>
-class SetAssociativeCache {
+class Slot {
  public:
-  class Slot {
-   public:
-    KeyType key;
-    ValueType value;
-    std::chrono::time_point<std::chrono::system_clock> access_time;
-  };
+  KeyType key;
+  ValueType value;
+  std::chrono::time_point<std::chrono::system_clock> access_time;
+};
 
-  class SlotContainer : public std::vector<Slot> {
-  };
+template <typename KeyType, typename ValueType>
+class SlotContainer : public std::vector<Slot<KeyType, ValueType>> {
+};
 
+template <typename SlotContainer>
+struct LeastRecentlyUsedReplacementAlgorithm {
+  size_t operator()(const SlotContainer& container) const noexcept {
+    const auto now = std::chrono::system_clock::now();
+    auto delta = now - container[0].access_time;
+    size_t index = 0;
+    for (size_t i = 0; i < container.size(); i++) {
+      if (now - container[i].access_time > delta) {
+        index = i;
+      }
+    }
+    return index;
+  }
+};
+
+template <typename KeyType, typename ValueType, typename ReplacementAlgorithm = LeastRecentlyUsedReplacementAlgorithm<SlotContainer<KeyType, ValueType>>>
+class SetAssociativeCache {
  private:
+  using SlotContainer = SlotContainer<KeyType, ValueType>;
+  using Slot = Slot<KeyType, ValueType>;
+
   size_t num_sets_ = 4;
   size_t num_slots_ = 5;
   std::vector<SlotContainer> slots_;
+  ReplacementAlgorithm replacement_algorithm_;
 
  public:
   SetAssociativeCache() {
@@ -68,21 +88,15 @@ class SetAssociativeCache {
     // The container is full. Evict something.
     std::cout << " Conflict miss. Determining which key to replace..." << std::endl;
 
-    const auto now = std::chrono::system_clock::now();
-    Slot* lru_slot = &container[0];
-    auto delta = now - lru_slot->access_time;
-    for (auto& slot : container) {
-      if (now - slot.access_time > delta) {
-        lru_slot = &slot;
-      }
-    }
+    const auto index = replacement_algorithm_(container);
+    auto& evicted_slot = container[index];
 
-    std::cout << "  Evicting key \"" << lru_slot->key << "\" => \"" << lru_slot->value << "\" ";
+    std::cout << "  Evicting key \"" << evicted_slot.key << "\" => \"" << evicted_slot.value << "\" ";
     std::cout << "and setting key \"" << key << "\" => \"" << value << "\"" << std::endl;
 
-    lru_slot->access_time = now;
-    lru_slot->key = key;
-    lru_slot->value = value;
+    evicted_slot.access_time = std::chrono::system_clock::now();
+    evicted_slot.key = key;
+    evicted_slot.value = value;
   }
 
   ValueType Get(KeyType key) {
