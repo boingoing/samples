@@ -10,43 +10,61 @@
 #include "hashmap_cache.h"
 #include "helpers.h"
 
-template <typename KeyType, typename ValueType>
-class Slot {
+class ReplacementAlgorithmBase {
  public:
-  KeyType key;
-  ValueType value;
-  std::chrono::time_point<std::chrono::system_clock> access_time;
+  virtual void NotifyUsed(size_t slot_index) = 0;
+  virtual size_t ChooseEvictionTarget() = 0;
 };
 
-template <typename KeyType, typename ValueType>
-class SlotContainer : public std::vector<Slot<KeyType, ValueType>> {
-};
+class LeastRecentlyUsedReplacementAlgorithm : ReplacementAlgorithmBase {
+ private:
+  size_t age_counter_ = 0;
+  std::vector<size_t> age_bits_;
 
-template <typename SlotContainer>
-struct LeastRecentlyUsedReplacementAlgorithm {
-  size_t operator()(const SlotContainer& container) const noexcept {
-    const auto now = std::chrono::system_clock::now();
-    auto delta = now - container[0].access_time;
+ public:
+  LeastRecentlyUsedReplacementAlgorithm() = delete;
+
+  LeastRecentlyUsedReplacementAlgorithm(size_t num_slots) : age_bits_(num_slots) {
+  }
+
+  ~LeastRecentlyUsedReplacementAlgorithm() = default;
+
+  void NotifyUsed(size_t slot_index) override {
+    age_bits_[slot_index] = age_counter_++;
+  }
+
+  size_t ChooseEvictionTarget() override {
+    auto index_age = age_bits_[0];
     size_t index = 0;
-    for (size_t i = 0; i < container.size(); i++) {
-      if (now - container[i].access_time > delta) {
+    for (size_t i = 1; i < age_bits_.size(); i++) {
+      if (age_bits_[i] < index_age) {
         index = i;
+        index_age = age_bits_[i];
       }
     }
     return index;
   }
 };
 
-template <typename KeyType, typename ValueType, typename ReplacementAlgorithm = LeastRecentlyUsedReplacementAlgorithm<SlotContainer<KeyType, ValueType>>>
+template <typename KeyType, typename ValueType, typename ReplacementAlgorithm = LeastRecentlyUsedReplacementAlgorithm>
 class SetAssociativeCache {
  private:
-  using SlotContainer = SlotContainer<KeyType, ValueType>;
-  using Slot = Slot<KeyType, ValueType>;
+  struct Slot {
+    KeyType key;
+    ValueType value;
+  };
+
+  struct SlotContainer : public std::vector<Slot> {
+    ReplacementAlgorithm replacement_algorithm_;
+
+    SlotContainer() = delete;
+    SlotContainer(size_t num_slots) : replacement_algorithm_(num_slots) {}
+    ~SlotContainer() = default;
+  };
 
   size_t num_sets_;
   size_t num_slots_;
   std::vector<SlotContainer> slots_;
-  ReplacementAlgorithm replacement_algorithm_;
   std::mutex slot_mutex_;
 
  public:
@@ -66,12 +84,13 @@ class SetAssociativeCache {
     std::cout << "Attempting to set key \"" << key << "\" => \"" << value << "\" in bucket " << set_index << "..." << std::endl;
 
     // Check to see if key is already mapped.
-    for (auto& slot : container) {
+    for (size_t i = 0; i < container.size(); i++) {
+      auto& slot = container[i];
       if (slot.key == key) {
         std::cout << " Updating key \"" << key << "\" from \"" << slot.value << "\" to \"" << value << "\"" << std::endl;
 
         slot.value = value;
-        slot.access_time = std::chrono::system_clock::now();
+        container.replacement_algorithm_.NotifyUsed(i);
         return;
       }
     }
@@ -80,20 +99,21 @@ class SetAssociativeCache {
     if (container.size() < num_slots_) {
       std::cout << " Setting new key \"" << key << "\" => \"" << value << "\"" << std::endl;
 
-      container.push_back({key, value, std::chrono::system_clock::now()});
+      container.replacement_algorithm_.NotifyUsed(container.size());
+      container.push_back({key, value});
       return;
     }
 
     // The container is full. Evict something.
     std::cout << " Conflict miss. Determining which key to replace..." << std::endl;
 
-    const auto index = replacement_algorithm_(container);
+    const auto index = container.replacement_algorithm_.ChooseEvictionTarget();
+    container.replacement_algorithm_.NotifyUsed(index);
     auto& evicted_slot = container[index];
 
     std::cout << "  Evicting key \"" << evicted_slot.key << "\" => \"" << evicted_slot.value << "\" ";
     std::cout << "and setting key \"" << key << "\" => \"" << value << "\"" << std::endl;
 
-    evicted_slot.access_time = std::chrono::system_clock::now();
     evicted_slot.key = key;
     evicted_slot.value = value;
   }
@@ -102,9 +122,10 @@ class SetAssociativeCache {
     const auto set_index = HashToSet(key);
     auto& container = slots_[set_index];
 
-    for (auto& slot : container) {
+    for (size_t i = 0; i < container.size(); i++) {
+      auto& slot = container[i];
       if (slot.key == key) {
-        slot.access_time = std::chrono::system_clock::now();
+        container.replacement_algorithm_.NotifyUsed(i);
         return slot.value;
       }
     }
@@ -130,7 +151,11 @@ class SetAssociativeCache {
  private:
   void Reallocate() {
     std::lock_guard guard(slot_mutex_);
-    slots_.resize(num_sets_);
+    slots_.clear();
+    slots_.reserve(num_sets_);
+    for (size_t i = 0; i < num_sets_; i++) {
+      slots_.emplace_back(SlotContainer(num_slots_));
+    }
   }
 
   size_t HashToSet(KeyType key) {
@@ -149,6 +174,8 @@ int main_cache() {
   cache.Set(17, 6);
   cache.Set(21, 7);
   cache.Set(9, 8);
+  cache.Get(5);
+  cache.Set(25, 9);
   cache.Print();
 
   return 0;
