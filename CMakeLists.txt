@@ -44,6 +44,7 @@ set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_stuff.cc
   ${PROJECT_SOURCE_DIR}/src/array_sudoku.cc
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
+  ${PROJECT_SOURCE_DIR}/src/bitwise_ops.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_happy_number.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_ransom.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_redis.cc

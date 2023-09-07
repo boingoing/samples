@@ -19,6 +19,7 @@
 #include "hashmap_redis.h"
 #include "hashmap_strings.h"
 #include "string_find_word_under_cursor.h"
+#include "bitwise_ops.h"
 
 int main() {
   main_merge();
@@ -42,6 +43,7 @@ int main() {
   main_maze();
   main_redis();
   main_combinations();
+  main_bitwise_ops();
 
   return 0;
 }
