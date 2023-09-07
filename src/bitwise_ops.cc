@@ -59,6 +59,20 @@ std::string binary_add(const std::string& a, const std::string& b) {
   return result;
 }
 
+// Count the number of bits set in a 32-bit int.
+// This is leetcode 191. Number of 1 Bits
+// https://leetcode.com/problems/number-of-1-bits
+int count_bits_set(uint32_t n) {
+  int count = 0;
+
+  while (n != 0) {
+    count += n & 0b1;
+    n = n >> 1;
+  }
+
+  return count;
+}
+
 void test_binary_add(const std::string a, const std::string b, const std::string expected) {
   std::cout << std::endl << "Attempting to binary add " << std::quoted(a) << " and " << std::quoted(b) << "..." << std::endl;
 
@@ -66,9 +80,20 @@ void test_binary_add(const std::string a, const std::string b, const std::string
   std::cout << "Found: " << std::quoted(actual) << " (expected: " << std::quoted(expected) << ")" << std::endl;
 }
 
+void test_count_bits_set(uint32_t n, int expected) {
+  std::cout << std::endl << "Counting count of set bits in " << n << "..." << std::endl;
+
+  const auto actual = count_bits_set(n);
+  std::cout << "Found: " << actual << " (expected: " << expected << ")" << std::endl;
+}
+
 int main_bitwise_ops() {
   test_binary_add("11", "1", "100");
   test_binary_add("1010", "1011", "10101");
+
+  test_count_bits_set(0b00000000000000000000000000001011, 3);
+  test_count_bits_set(0b00000000000000000000000010000000, 1);
+  test_count_bits_set(0b11111111111111111111111111111101, 31);
 
   return 0;
 }
