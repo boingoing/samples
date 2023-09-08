@@ -59,6 +59,7 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/hashmap_ransom.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_redis.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
+  ${PROJECT_SOURCE_DIR}/src/random_select.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
   ${PROJECT_SOURCE_DIR}/src/test_islands.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
