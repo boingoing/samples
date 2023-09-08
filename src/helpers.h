@@ -14,4 +14,14 @@ void print_vector(const std::vector<t>& v) {
   std::cout << " ]" << std::endl;
 }
 
+template<typename t>
+void print_grid(const std::vector<std::vector<t>>& grid) {
+  for (size_t x = 0; x < grid.size(); x++) {
+    for (size_t y = 0; y < grid[x].size(); y++) {
+      std::cout << std::setw(3) << grid[x][y] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
 #endif  // __helpers_h__

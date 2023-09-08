@@ -14,12 +14,15 @@
 #include "array_sorted_merge.h"
 #include "array_sudoku.h"
 #include "array_two_sum.h"
+#include "bitwise_ops.h"
+#include "graph_islands_count.h"
+#include "graph_islands_identify.h"
+#include "graph_islands_size.h"
 #include "hashmap_happy_number.h"
 #include "hashmap_ransom.h"
 #include "hashmap_redis.h"
 #include "hashmap_strings.h"
 #include "string_find_word_under_cursor.h"
-#include "bitwise_ops.h"
 
 int main() {
   main_merge();
@@ -44,6 +47,9 @@ int main() {
   main_redis();
   main_combinations();
   main_bitwise_ops();
+  main_identify_islands();
+  main_count_islands();
+  main_largest_island();
 
   return 0;
 }

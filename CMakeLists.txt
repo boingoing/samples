@@ -24,9 +24,6 @@ add_executable (node_get_sum ${NODE_GET_SUM_SOURCES})
 set (UDP_BUFFER_SOURCES ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 
-set (COUNT_ISLANDS_SOURCES ${PROJECT_SOURCE_DIR}/src/count_islands.cc)
-add_executable (count_islands ${COUNT_ISLANDS_SOURCES})
-
 set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
   ${PROJECT_SOURCE_DIR}/src/array_h_index.cc
@@ -45,11 +42,15 @@ set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_sudoku.cc
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
   ${PROJECT_SOURCE_DIR}/src/bitwise_ops.cc
+  ${PROJECT_SOURCE_DIR}/src/graph_islands_count.cc
+  ${PROJECT_SOURCE_DIR}/src/graph_islands_identify.cc
+  ${PROJECT_SOURCE_DIR}/src/graph_islands_size.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_happy_number.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_ransom.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_redis.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
-  ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc)
+  ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
+  ${PROJECT_SOURCE_DIR}/src/test_islands.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
 
 if (MSVC)

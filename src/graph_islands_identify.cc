@@ -7,7 +7,17 @@
 #include <unordered_set>
 #include <vector>
 
+#include "graph_islands_identify.h"
 #include "test_islands.h"
+
+// A non-recursive solution to the "count islands" problem which also
+// identifies the islands in the grid.
+// The algorithm which isolates the island chunks is iterative and runs
+// in O(n) time where n is the count of tiles in the grid.
+// After isolating the chunks, we then need to combine equivalent chunks
+// - that is chunks which are actually part of the same larger island -
+// in order to find the actual count of islands and full shape of each
+// island.
 
 #define VERBOSE_DEBUG 1
 
@@ -256,11 +266,13 @@ std::vector<std::vector<island_type_large>> convert_grid_to_large_id(std::vector
   return large_grid;
 }
 
-int main() {
+int main_identify_islands() {
   auto huge_grid = get_huge_grid();
   test_one_grid(convert_grid_to_large_id(huge_grid), 6121);
 
   test_one_grid(get_simple_grid(), 5);
   test_one_grid(get_medium_complexity_grid(), 2);
   test_one_grid(get_complex_grid(), 1);
+
+  return 0;
 }
