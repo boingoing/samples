@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "string_find_word_under_cursor.h"
 #include "helpers.h"
+#include "test_helpers.h"
 
 // Only detect space characters as white space.
 // TODO: We ought to check for other whitespace.
@@ -38,34 +38,39 @@ std::string word_under_cursor(const std::string& buffer, size_t cursor_index) {
   return buffer.substr(left_index, right_index - left_index);
 }
 
-void test_word_under_cursor(const std::string& buffer, size_t cursor_index, const std::string& expected) {
-  std::cout << std::endl << "Looking for the word at cursor position " << cursor_index << " in string \"" << buffer << "\"" << std::endl;
+struct WordUnderCursorTestData : TestCaseDataWithExpectedResult<std::string> {
+  std::string buffer;
+  size_t cursor_index;
+};
 
-  const auto actual = word_under_cursor(buffer, cursor_index);
-  std::cout << "Found: \"" << actual << "\" (expected \"" << expected << "\")" << std::endl;
-}
+std::vector<WordUnderCursorTestData> word_under_cursor_tests = {
+    {"lorem", "lorem ipsum something else", 0},
+    {"lorem", "lorem ipsum something else", 2},
+    {"lorem", "lorem ipsum something else", 4},
+    {"lorem", "lorem ipsum something else", 5},
+    {"ipsum", "lorem ipsum something else", 6},
+    {"ipsum", "lorem ipsum something else", 9},
+    {"ipsum", "lorem ipsum something else", 10},
+    {"ipsum", "lorem ipsum something else", 11},
+    {"something", "lorem ipsum something else", 12},
+    {"something", "lorem ipsum something else", 15},
+    {"something", "lorem ipsum something else", 21},
+    {"else", "lorem ipsum something else", 22},
+    {"else", "lorem ipsum something else", 26},
 
-int main_word_under_cursor() {
-  test_word_under_cursor("lorem ipsum something else", 2, "lorem");
-  test_word_under_cursor("lorem ipsum something else", 0, "lorem");
-  test_word_under_cursor("lorem ipsum something else", 4, "lorem");
-  test_word_under_cursor("lorem ipsum something else", 5, "lorem");
-  test_word_under_cursor("lorem ipsum something else", 6, "ipsum");
-  test_word_under_cursor("lorem ipsum something else", 9, "ipsum");
-  test_word_under_cursor("lorem ipsum something else", 10, "ipsum");
-  test_word_under_cursor("lorem ipsum something else", 11, "ipsum");
-  test_word_under_cursor("lorem ipsum something else", 12, "something");
-  test_word_under_cursor("lorem ipsum something else", 15, "something");
-  test_word_under_cursor("lorem ipsum something else", 21, "something");
-  test_word_under_cursor("lorem ipsum something else", 22, "else");
-  test_word_under_cursor("lorem ipsum something else", 26, "else");
+    {"", "", 10},
 
-  test_word_under_cursor("", 10, "");
+    {"", "word1 word2   word3", 12},
+    {"", "word1 word2   word3", 13},
+    {"word2", "word1 word2   word3", 11},
+    {"word3", "word1 word2   word3", 14},
+};
 
-  test_word_under_cursor("word1 word2   word3", 12, "");
-  test_word_under_cursor("word1 word2   word3", 13, "");
-  test_word_under_cursor("word1 word2   word3", 11, "word2");
-  test_word_under_cursor("word1 word2   word3", 14, "word3");
+class WordUnderCursorTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(WordUnderCursorTest, tests, WordUnderCursorTestData, word_under_cursor_tests) {
+  trace << std::endl << "Looking for the word at cursor position " << data.cursor_index << " in string \"" << data.buffer << "\"" << std::endl;
+
+  const auto actual = word_under_cursor(data.buffer, data.cursor_index);
+  assertEqual(actual, data.expected);
 }

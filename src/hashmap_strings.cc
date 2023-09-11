@@ -5,8 +5,8 @@
 #include <map>
 #include <unordered_map>
 
-#include "hashmap_strings.h"
 #include "helpers.h"
+#include "test_helpers.h"
 
 // Given two strings, |s| and |t|, determine if they are isomorphic strings.
 // This is leetcode 205. Isomorphic Strings
@@ -238,4 +238,54 @@ int main_hashmap_strings() {
   test_group_anagrams({"a"}, {{"a"}});
 
   return 0;
+}
+
+struct StringsAreIsomorphicTestData : TestCaseDataWithExpectedResult<bool> {
+  std::string s;
+  std::string t;
+};
+
+std::vector<StringsAreIsomorphicTestData> are_isomorphic_tests = {
+  {true, "a", "b"},
+  {true, "egg", "add"},
+  {false, "foo", "bar"},
+  {true, "paper", "title"},
+  {false, "badc", "baba"},
+};
+
+class StringsAreIsomorphicTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(StringsAreIsomorphicTest, tests, StringsAreIsomorphicTestData, are_isomorphic_tests) {
+  trace << std::endl << "Looking to see if \"" << data.s << "\" and \"" << data.t << "\" are isomorphic" << std::endl;
+
+  const auto actual = are_isomorphic(data.s, data.t);
+  assertEqual(actual, data.expected);
+}
+
+struct WordsFollowPatternTestData : TestCaseDataWithExpectedResult<bool> {
+  std::string pattern;
+  std::string str;
+};
+
+std::vector<WordsFollowPatternTestData> words_follow_pattern_tests = {
+  {true, "aba", "foo bar foo"},
+  {false, "aba", "foo bar bar"},
+  {true, "aabb", "foo foo bar bar"},
+  {true, "abba", "dog cat cat dog"},
+  {false, "abba", "dog cat cat fish"},
+  {false, "aaaa", "dog cat cat dog"},
+  {false, "abba", "foo foo foo foo"},
+  {false, "badc", "foo bar foo baz"},
+  {false, "aa", "foo foo foo"},
+  {false, "aa", "foo foo bar"},
+  {false, "aaaa", "foo"},
+};
+
+class WordsFollowPatternTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(WordsFollowPatternTest, tests, WordsFollowPatternTestData, words_follow_pattern_tests) {
+  trace << std::endl << "Looking to see if \"" << data.str << "\" follows the pattern \"" << data.pattern << "\"" << std::endl;
+
+  const auto actual = words_follow_pattern(data.pattern, data.str);
+  assertEqual(actual, data.expected);
 }

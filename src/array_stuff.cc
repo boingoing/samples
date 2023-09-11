@@ -21,8 +21,8 @@
 #include "hashmap_happy_number.h"
 #include "hashmap_ransom.h"
 #include "hashmap_redis.h"
-#include "hashmap_strings.h"
-#include "string_find_word_under_cursor.h"
+
+#include "test_helpers.h"
 
 int main() {
   main_merge();
@@ -33,13 +33,11 @@ int main() {
   main_max_delta();
   main_jump_game();
   main_h_index();
-  main_word_under_cursor();
   main_gas_stations();
   main_sudoku();
   main_min_rewards();
   main_rain();
   main_ransom();
-  main_hashmap_strings();
   main_two_sum();
   main_happy_number();
   main_array_search();
@@ -50,6 +48,8 @@ int main() {
   main_identify_islands();
   main_count_islands();
   main_largest_island();
+
+  TestCaseContainer::runAllTests();
 
   return 0;
 }

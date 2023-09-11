@@ -24,7 +24,8 @@ add_executable (node_get_sum ${NODE_GET_SUM_SOURCES})
 set (UDP_BUFFER_SOURCES ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 
-set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
+set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/test_helpers.cc
+  ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
   ${PROJECT_SOURCE_DIR}/src/array_h_index.cc
   ${PROJECT_SOURCE_DIR}/src/array_jump_game.cc
