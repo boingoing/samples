@@ -38,7 +38,9 @@ class Assert {
   void equal(const std::vector<T>& set1, const std::vector<T>& set2) {
     equal(set1.size(), set2.size());
     for (size_t i = 0; i < set1.size(); i++) {
-      equal(set1[i], set2[i]);
+      if (i < set2.size()) {
+        equal(set1[i], set2[i]);
+      }
     }
   }
 

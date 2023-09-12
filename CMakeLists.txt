@@ -23,10 +23,6 @@ set (SIMPLE_OPTIMIZER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/simple_optimizer.cc)
 add_executable (simple_optimizer ${SIMPLE_OPTIMIZER_SOURCES})
 
-set (UDP_BUFFER_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
-add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
-
 set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc
   ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
@@ -58,7 +54,8 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
   ${PROJECT_SOURCE_DIR}/src/random_select.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
-  ${PROJECT_SOURCE_DIR}/src/test_islands.cc)
+  ${PROJECT_SOURCE_DIR}/src/test_islands.cc
+  ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
 target_link_libraries (array_stuff test_lib)
 
