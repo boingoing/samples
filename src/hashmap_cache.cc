@@ -8,8 +8,10 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "hashmap_cache.h"
 #include "helpers.h"
+#include "test/TestCase.h"
+
+#define VERBOSE 0
 
 template <typename KeyType>
 class ReplacementAlgorithmBase {
@@ -80,20 +82,28 @@ class CacheSet {
     auto& iter = map_store_.find(key);
 
     if (iter != map_store_.end()) {
+#if VERBOSE
       std::cout << " Updating key \"" << key << "\" from \"" << iter->second << "\" to \"" << value << "\"" << std::endl;
+#endif
       iter->second = value;
     } else {
       if (map_store_.size() == capacity_) {
+#if VERBOSE
         std::cout << " Conflict miss. Determining which key to replace..." << std::endl;
+#endif
         const auto& key_to_evict = replacement_algorithm_.ChooseEvictionTarget();
 
         const auto& iter = map_store_.find(key_to_evict);
+#if VERBOSE
         std::cout << "  Evicting key \"" << iter->first << "\" => \"" << iter->second << "\" ";
         std::cout << "and setting key \"" << key << "\" => \"" << value << "\"" << std::endl;
+#endif
 
         RemoveKey(key_to_evict);
       } else {
+#if VERBOSE
         std::cout << " Setting new key \"" << key << "\" => \"" << value << "\"" << std::endl;
+#endif
       }
 
       map_store_[key] = value;
@@ -145,7 +155,9 @@ class SetAssociativeCache {
 
   void Set(KeyType key, ValueType value) {
     const auto set_index = HashToSet(key);
+#if VERBOSE
     std::cout << "Attempting to set key \"" << key << "\" => \"" << value << "\" in bucket " << set_index << "..." << std::endl;
+#endif
     auto& container = slots_[set_index];
     return container.Set(key, value);
   }
@@ -178,8 +190,10 @@ class SetAssociativeCache {
   }
 };
 
-int main_cache() {
-  std::cout << std::endl << "Testing SetAssociativeCache..." << std::endl;
+class SetAssociativeCacheTest : public TestCase {};
+
+TEST_CASE(SetAssociativeCacheTest, tests) {
+  trace << std::endl << "Testing SetAssociativeCache..." << std::endl;
 
   SetAssociativeCache<int, int> cache(4, 5);
   cache.Set(1, 2);
@@ -191,7 +205,10 @@ int main_cache() {
   cache.Set(9, 8);
   cache.Get(5);
   cache.Set(25, 9);
-  cache.Print();
 
-  return 0;
+#if VERBOSE
+  cache.Print();
+#endif
+
+  // TODO: Verify cache miss evicts expected key.
 }
