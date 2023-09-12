@@ -6,7 +6,10 @@
 #include <chrono>
 #include <thread>
 
+#include "test/TestCase.h"
+
 #define THREAD_COUNT 8
+#define VERBOSE 0
 
 using namespace std::chrono_literals;
 
@@ -25,6 +28,7 @@ struct ThreadAction {
 
 std::array<std::queue<ThreadAction>, THREAD_COUNT> thread_queues;
 std::mutex thread_queues_mutex;
+std::vector<size_t> node_sums;
 
 // Send |value| to |node_id_dest|.
 // Blocks until destination has a matching Recv() call pending.
@@ -130,18 +134,33 @@ int GetSum(int node_count, int my_node_id, int my_value) {
     power_of_2 = next_power_of_2;
   }
 
+#if VERBOSE
   std::cout << "Node " << my_node_id << " sum: " << sum << std::endl;
+#endif
+  node_sums[my_node_id] = sum;
   return sum;
 }
 
-int main() {
+class GetSumNodeNetworkTest : public TestCase {};
+
+TEST_CASE(GetSumNodeNetworkTest, base_test) {
+  const std::vector<int> node_values = {1,1,1,1,1,1,1,1};
+  trace << std::endl << "Attempting to quickly collect the sum of " << THREAD_COUNT << " nodes containing these values:" << std::endl;
+  trace.vector(node_values);
+
+  node_sums.resize(THREAD_COUNT);
   std::vector<std::thread> threads;
   for (int i = 0; i < THREAD_COUNT; i++) {
     // All threads have value 1?
-    threads.emplace_back(GetSum, THREAD_COUNT, i, 1);
+    threads.emplace_back(GetSum, THREAD_COUNT, i, node_values[i]);
   }
 
   for (auto& thread : threads) {
     thread.join();
   }
+
+  const std::vector<size_t> expected = {8,8,8,8,8,8,8,8};
+  trace << "Nodes reported these sums:" << std::endl;
+  trace.vector(node_sums);
+  assert.equal(node_sums, expected);
 }

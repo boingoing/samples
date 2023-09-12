@@ -23,10 +23,6 @@ set (SIMPLE_OPTIMIZER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/simple_optimizer.cc)
 add_executable (simple_optimizer ${SIMPLE_OPTIMIZER_SOURCES})
 
-set (NODE_GET_SUM_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc)
-add_executable (node_get_sum ${NODE_GET_SUM_SOURCES})
-
 set (UDP_BUFFER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
@@ -51,6 +47,7 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/array_sudoku.cc
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
   ${PROJECT_SOURCE_DIR}/src/bitwise_ops.cc
+  ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_count.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_identify.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_size.cc
