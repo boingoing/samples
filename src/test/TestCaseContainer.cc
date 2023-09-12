@@ -11,6 +11,7 @@
 TestCaseMap TestCaseContainer::tests_;
 std::string TestCaseContainer::filter_;
 TestCaseStats TestCaseContainer::stats_;
+bool TestCaseContainer::verbose_ = false;
 
 namespace {
 
@@ -37,9 +38,15 @@ void TestCaseContainer::add(TestCase* tc) {
 // static
 TestResult TestCaseContainer::runOneTest(TestCase* tc) {
   if (shouldRunTest(tc, filter_)) {
-    return tc->run();
+    tc->run();
+    if (verbose_) {
+      std::cout << std::endl << tc->getFullName() << ":" << std::endl;
+      std::cout << tc->getBuffer() << std::endl;
+    }
+  } else {
+    tc->setResult(TestResult::Skip);
   }
-  return TestResult::Skip;
+  return tc->getResult();
 }
 
 // static
@@ -75,6 +82,11 @@ void TestCaseContainer::runAllTests() {
 // static
 void TestCaseContainer::setFilter(const std::string& filter) {
   filter_ = filter;
+}
+
+// static
+void TestCaseContainer::enableVerbose() {
+  verbose_ = true;
 }
 
 // static

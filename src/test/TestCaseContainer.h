@@ -23,13 +23,15 @@ class TestCaseContainer {
   static TestCaseMap tests_;
   static std::string filter_;
   static TestCaseStats stats_;
+  static bool verbose_;
 
  public:
   static void add(TestCase* tc);
   static TestResult runOneTest(TestCase* tc);
   static void runAllTests();
-  static void setFilter(const std::string& filter);
   static void aggregate(TestResult result);
+  static void setFilter(const std::string& filter);
+  static void enableVerbose();
 };
 
 #endif  // __test_TestCaseContainer_h__

@@ -11,9 +11,19 @@ int main(int argc, const char** argv) {
     args.emplace_back(argv[i]);
   }
 
-  if (args.size() > 1) {
-    TestCaseContainer::setFilter(args[1]);
+  for (auto iter = args.cbegin(); iter != args.cend(); iter++) {
+    const auto& arg = *iter;
+    if (arg == "--verbose") {
+      TestCaseContainer::enableVerbose();
+    } else if (arg == "--filter") {
+      // If there are no more arguments, break out of the loop.
+      if (++iter == args.cend()) {
+        break;
+      }
+      TestCaseContainer::setFilter(*iter);
+    }
   }
+
   TestCaseContainer::runAllTests();
 
   return 0;
