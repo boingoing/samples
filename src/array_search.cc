@@ -13,9 +13,9 @@
 // found.
 // This is leetcode 35. Search Insert Position
 // https://leetcode.com/problems/search-insert-position
-int binary_search(std::vector<int>& nums, int target) {
-  int left = 0;
-  int right = nums.size();
+size_t binary_search(std::vector<int>& nums, int target) {
+  size_t left = 0;
+  size_t right = nums.size();
 
   // Just check to see if the target is larger than the largest value in |nums|.
   if (target > nums[nums.size() - 1]) {
@@ -24,8 +24,8 @@ int binary_search(std::vector<int>& nums, int target) {
 
   // Otherwise, binary search.
   while (left <= right) {
-    const int current = (left + right) / 2;
-    const int value = nums[current];
+    const size_t current = (left + right) / 2;
+    const size_t value = nums[current];
     if (target < value) {
       right = current - 1;
     } else if (target > value) {
@@ -38,7 +38,7 @@ int binary_search(std::vector<int>& nums, int target) {
   return left;
 }
 
-struct ArraySearchTestData : TestCaseDataWithExpectedResult<int> {
+struct ArraySearchTestData : TestCaseDataWithExpectedResult<size_t> {
   std::vector<int> nums;
   int target;
 };
