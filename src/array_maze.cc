@@ -5,8 +5,8 @@
 #include <iostream>
 #include <vector>
 
-#include "array_maze.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 #define VERBOSE 0
 
@@ -222,102 +222,116 @@ Path find_shortest_path(Maze& maze, Coord& start, Coord& end) {
   return {};
 }
 
-void test_find_path(Maze maze, Coord start, Coord end, Path expected) {
-  std::cout << std::endl << "Searching for a path through this maze:" << std::endl;
-  for (const auto& row : maze) {
-    print_vector(row);
-  }
+struct MazeFindPathTestData : TestCaseDataWithExpectedResult<Path> {
+  Maze maze;
+  Coord start;
+  Coord end;
+};
 
-  const auto actual = find_path(maze, start, end);
-  std::cout << "Found: " << std::endl;
-  for (const auto& coord : actual) {
-    std::cout << "(" << coord.first << ", " << coord.second << ") => ";
-  }
-  std::cout << std::endl << "Expected: " << std::endl;
-  for (const auto& coord : expected) {
-    std::cout << "(" << coord.first << ", " << coord.second << ") => ";
-  }
-  std::cout << std::endl;
-}
-
-void test_find_shortest_path(Maze maze, Coord start, Coord end, Path expected) {
-  std::cout << std::endl << "Searching for the shortest path through this maze:" << std::endl;
-  for (const auto& row : maze) {
-    print_vector(row);
-  }
-
-  const auto actual = find_shortest_path(maze, start, end);
-  std::cout << "Found: " << std::endl;
-  for (const auto& coord : actual) {
-    std::cout << "(" << coord.first << ", " << coord.second << ") => ";
-  }
-  std::cout << std::endl << "Expected: " << std::endl;
-  for (const auto& coord : expected) {
-    std::cout << "(" << coord.first << ", " << coord.second << ") => ";
-  }
-  std::cout << std::endl;
-}
-
-int main_maze() {
-  test_find_path({
+std::vector<MazeFindPathTestData> maze_find_path_tests = {
+  {Path({
+    {0, 0},
+    {0, 1},
+    {0, 2},
+    {0, 3},
+    {1, 3},
+    {2, 3},
+    {3, 3},
+    {4, 3},
+    {4, 4},
+    {4, 5},
+    {4, 6}}),
+    {
     {0, 0, 0, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 1, 0},
     {0, 0, 1, 0, 1, 1, 0},
     {0, 0, 1, 0, 1, 0, 1},
     {1, 1, 1, 0, 0, 0, 0}},
     {0, 0},
-    {4, 6},
-    {
-      {0, 0},
-      {0, 1},
-      {0, 2},
-      {0, 3},
-      {1, 3},
-      {2, 3},
-      {3, 3},
-      {4, 3},
-      {4, 4},
-      {4, 5},
-      {4, 6}});
-  test_find_path({
+    {4, 6}},
+  {Path({}), {
     {0, 0, 0, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 1, 0},
     {0, 0, 1, 0, 1, 1, 0},
     {0, 0, 1, 1, 1, 0, 1},
     {1, 1, 1, 0, 0, 0, 0}},
     {0, 0},
-    {4, 6},
-    {});
+    {4, 6}},
+};
 
-  test_find_shortest_path({
+class MazeFindPathTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(MazeFindPathTest, tests, MazeFindPathTestData, maze_find_path_tests) {
+  trace << std::endl << "Searching for a path through this maze:" << std::endl;
+  trace.grid(data.maze);
+
+  const auto actual = find_path(data.maze, data.start, data.end);
+  trace << "Found: " << std::endl;
+  for (const auto& coord : actual) {
+    trace << "(" << coord.first << ", " << coord.second << ") => ";
+  }
+  trace << std::endl << "Expected: " << std::endl;
+  for (const auto& coord : data.expected) {
+    trace << "(" << coord.first << ", " << coord.second << ") => ";
+  }
+  trace << std::endl;
+
+  // TODO: Assert path found is correct.
+}
+
+struct MazeFindShortestPathTestData : TestCaseDataWithExpectedResult<Path> {
+  Maze maze;
+  Coord start;
+  Coord end;
+};
+
+std::vector<MazeFindShortestPathTestData> maze_find_shortest_path_tests = {
+  {Path({
+    {0, 0},
+    {0, 1},
+    {0, 2},
+    {0, 3},
+    {1, 3},
+    {2, 3},
+    {3, 3},
+    {4, 3},
+    {4, 4},
+    {4, 5},
+    {4, 6}}),
+    {
     {0, 0, 0, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 1, 0},
     {0, 0, 1, 0, 1, 1, 0},
     {0, 0, 1, 0, 1, 0, 1},
     {1, 1, 1, 0, 0, 0, 0}},
     {0, 0},
-    {4, 6},
-    {
-      {0, 0},
-      {0, 1},
-      {0, 2},
-      {0, 3},
-      {1, 3},
-      {2, 3},
-      {3, 3},
-      {4, 3},
-      {4, 4},
-      {4, 5},
-      {4, 6}});
-  test_find_shortest_path({
+    {4, 6}},
+  {Path({}), {
     {0, 0, 0, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 1, 0},
     {0, 0, 1, 0, 1, 1, 0},
     {0, 0, 1, 1, 1, 0, 1},
     {1, 1, 1, 0, 0, 0, 0}},
     {0, 0},
-    {4, 6},
-    {});
+    {4, 6}},
+};
 
-  return 0;
+class MazeFindShortestPathTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(MazeFindShortestPathTest, tests, MazeFindShortestPathTestData, maze_find_shortest_path_tests) {
+  trace << std::endl << "Searching for the shortest path through this maze:" << std::endl;
+  trace.grid(data.maze);
+
+  const auto actual = find_shortest_path(data.maze, data.start, data.end);
+  trace << "Found: " << std::endl;
+  for (const auto& coord : actual) {
+    trace << "(" << coord.first << ", " << coord.second << ") => ";
+  }
+  trace << std::endl << "Expected: " << std::endl;
+  for (const auto& coord : data.expected) {
+    trace << "(" << coord.first << ", " << coord.second << ") => ";
+  }
+  trace << std::endl;
+
+  // TODO: Assert path found is correct.
 }

@@ -8,8 +8,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_rain.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given a height map for some terrain, |height|, calculate how many units of
 // rain water would be trapped between each element of the map.
@@ -63,17 +63,21 @@ int trapped_rain_water(std::vector<int>& height) {
   return total_trapped_blocks;
 }
 
-void test_trapped_rain_water(std::vector<int> height, int expected) {
-  std::cout << std::endl << "Calculating how much rain water can be trapped by this height map:" << std::endl;
-  print_vector(height);
+struct RainWaterTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> height;
+};
 
-  const auto actual = trapped_rain_water(height);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<RainWaterTestData> rain_water_tests = {
+  {6, {0,1,0,2,1,0,1,3,2,1,2,1}},
+  {9, {4,2,0,3,2,5}},
+};
 
-int main_rain() {
-  test_trapped_rain_water({0,1,0,2,1,0,1,3,2,1,2,1}, 6);
-  test_trapped_rain_water({4,2,0,3,2,5}, 9);
+class RainWaterTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(RainWaterTest, tests, RainWaterTestData, rain_water_tests) {
+  trace << std::endl << "Calculating how much rain water can be trapped by this height map:" << std::endl;
+  trace.vector(data.height);
+
+  const auto actual = trapped_rain_water(data.height);
+  assert.equal(actual, data.expected);
 }

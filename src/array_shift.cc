@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-#include "array_shift.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given an array, |nums|, shift the elements in the array right |k| times.
 // Elements at the end of the array wrap-around to the front when shifted.
@@ -41,31 +41,38 @@ void array_shift_right(std::vector<int>& nums, int k) {
   }
 }
 
-void test_array_shift_right(std::vector<int> nums, int k, std::vector<int> expected) {
-  std::cout << std::endl << "Shifting the elements of array right " << k << " times:" << std::endl;
-  print_vector(nums);
+struct ArrayShiftRightTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums;
+  int k;
+};
 
-  array_shift_right(nums, k);
-  std::cout << "Found: " << std::endl;
-  print_vector(nums);
-  std::cout << "Expected: " << std::endl;
-  print_vector(expected);
-}
+std::vector<ArrayShiftRightTestData> array_shift_right_tests = {
+  {std::vector<int>({3,3,2}), {3,2,3}, 1},
+  {std::vector<int>({0,1,2,3,4,5}), {0,1,2,3,4,5}, 0},
+  {std::vector<int>({5,0,1,2,3,4}), {0,1,2,3,4,5}, 1},
+  {std::vector<int>({4,5,0,1,2,3}), {0,1,2,3,4,5}, 2},
+  {std::vector<int>({3,4,5,0,1,2}), {0,1,2,3,4,5}, 3},
+  {std::vector<int>({2,3,4,5,0,1}), {0,1,2,3,4,5}, 4},
+  {std::vector<int>({1,2,3,4,5,0}), {0,1,2,3,4,5}, 5},
+  {std::vector<int>({0,1,2,3,4,5}), {0,1,2,3,4,5}, 6},
+  {std::vector<int>({5,0,1,2,3,4}), {0,1,2,3,4,5}, 7},
+  {std::vector<int>({4,5,0,1,2,3}), {0,1,2,3,4,5}, 8},
+  {std::vector<int>({3,4,5,0,1,2}), {0,1,2,3,4,5}, 9},
+  {std::vector<int>({2,3,4,5,0,1}), {0,1,2,3,4,5}, 10},
+  {std::vector<int>({1,2,3,4,5,0}), {0,1,2,3,4,5}, 11},
+};
 
-int main_array_shift() {
-  test_array_shift_right({3,2,3}, 1, {3,3,2});
-  test_array_shift_right({0,1,2,3,4,5}, 0, {0,1,2,3,4,5});
-  test_array_shift_right({0,1,2,3,4,5}, 1, {5,0,1,2,3,4});
-  test_array_shift_right({0,1,2,3,4,5}, 2, {4,5,0,1,2,3});
-  test_array_shift_right({0,1,2,3,4,5}, 3, {3,4,5,0,1,2});
-  test_array_shift_right({0,1,2,3,4,5}, 4, {2,3,4,5,0,1});
-  test_array_shift_right({0,1,2,3,4,5}, 5, {1,2,3,4,5,0});
-  test_array_shift_right({0,1,2,3,4,5}, 6, {0,1,2,3,4,5});
-  test_array_shift_right({0,1,2,3,4,5}, 7, {5,0,1,2,3,4});
-  test_array_shift_right({0,1,2,3,4,5}, 8, {4,5,0,1,2,3});
-  test_array_shift_right({0,1,2,3,4,5}, 9, {3,4,5,0,1,2});
-  test_array_shift_right({0,1,2,3,4,5}, 10, {2,3,4,5,0,1});
-  test_array_shift_right({0,1,2,3,4,5}, 11, {1,2,3,4,5,0});
+class ArrayShiftRightTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(ArrayShiftRightTest, tests, ArrayShiftRightTestData, array_shift_right_tests) {
+  trace << std::endl << "Shifting the elements of array right " << data.k << " times:" << std::endl;
+  trace.vector(data.nums);
+
+  array_shift_right(data.nums, data.k);
+  trace << "Found: " << std::endl;
+  trace.vector(data.nums);
+  trace << "Expected: " << std::endl;
+  trace.vector(data.expected);
+
+  assert.equal(data.nums, data.expected);
 }

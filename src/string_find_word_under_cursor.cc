@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "helpers.h"
-#include "test_helpers.h"
+#include "test/TestCase.h"
 
 // Only detect space characters as white space.
 // TODO: We ought to check for other whitespace.
@@ -72,5 +72,5 @@ TEST_CASE_WITH_DATA(WordUnderCursorTest, tests, WordUnderCursorTestData, word_un
   trace << std::endl << "Looking for the word at cursor position " << data.cursor_index << " in string \"" << data.buffer << "\"" << std::endl;
 
   const auto actual = word_under_cursor(data.buffer, data.cursor_index);
-  assertEqual(actual, data.expected);
+  assert.equal(actual, data.expected);
 }

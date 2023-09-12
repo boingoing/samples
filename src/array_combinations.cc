@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_combinations.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Mapping of integer phone number digit to the set of letters which that
 // digit can represent.
@@ -56,19 +56,24 @@ std::vector<std::string> phone_number_letters(std::string& digits) {
   return results;
 }
 
-void test_phone_number_letters(std::string digits, std::vector<std::string> expected) {
-  std::cout << std::endl << "Finding letter combinations of phone number " << digits << std::endl;
+struct PhoneNumberLetterCombinationsTestData : TestCaseDataWithExpectedResult<std::vector<std::string>> {
+  std::string digits;
+};
 
-  const auto actual = phone_number_letters(digits);
-  std::cout << "Found: " << std::endl;
-  print_vector(actual);
-  std::cout << "Expected: " << std::endl;
-  print_vector(expected);
-}
+std::vector<PhoneNumberLetterCombinationsTestData> phone_number_letters_tests = {
+  {std::vector<std::string>({"ad", "bd", "cd", "ae", "be", "ce", "af", "bf", "cf"}), "23"},
+  {{}, "1"},
+};
 
-int main_combinations() {
-  test_phone_number_letters("1", {});
-  test_phone_number_letters("23", {"ad", "bd", "cd", "ae", "be", "ce", "af", "df", "cf"});
+class PhoneNumberLetterCombinationsTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(PhoneNumberLetterCombinationsTest, tests, PhoneNumberLetterCombinationsTestData, phone_number_letters_tests) {
+  trace << std::endl << "Finding letter combinations of phone number " << data.digits << std::endl;
+
+  const auto actual = phone_number_letters(data.digits);
+  trace << "Found: " << std::endl;
+  trace.vector(actual);
+  trace << "Expected: " << std::endl;
+  trace.vector(data.expected);
+  assert.equivalent(actual, data.expected);
 }

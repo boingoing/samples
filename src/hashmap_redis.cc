@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hashmap_redis.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 std::unordered_map<std::string, std::string> key_value_store;
 std::unordered_map<std::string, std::unordered_map<std::string, std::string>> key_field_value_store;
@@ -109,31 +109,34 @@ std::string redis(std::string cmd) {
   return "";
 }
 
-void test_redis(std::string cmd, std::string expected) {
-  std::cout << std::endl << "Executing this command on the redis server: " << cmd << std::endl;
+struct RedisTestData : TestCaseDataWithExpectedResult<std::string> {
+  std::string command;
+};
 
-  const auto actual = redis(cmd);
-  std::cout << "Found:    \"" << actual << "\"" << std::endl;
-  std::cout << "Expected: \"" << expected << "\"" << std::endl;
-}
+std::vector<RedisTestData> redis_tests = {
+  {"OK", "set some_key some value"},
+  {"some value", "get some_key"},
+  {"", "get some_missing_key"},
+  {"some value", "del some_key"},
+  {"", "get some_key"},
+  {"OK", "set some_key some other value"},
+  {"OK", "set some_key another value"},
+  {"another value", "get some_key"},
 
-int main_redis() {
-  test_redis("set some_key some value", "OK");
-  test_redis("get some_key", "some value");
-  test_redis("get some_missing_key", "");
-  test_redis("del some_key", "some value");
-  test_redis("get some_key", "");
-  test_redis("set some_key some other value", "OK");
-  test_redis("set some_key another value", "OK");
-  test_redis("get some_key", "another value");
+  {"OK", "hset h_key field1 some field value 1"},
+  {"OK", "hset h_key field2 some field value 2"},
+  {"some field value 1", "hget h_key field1"},
+  {"some field value 2", "hget h_key field2"},
+  {"", "hget h_key field3"},
+  {"", "hget h_missing_key field"},
+  {"{ \"field1\": \"some field value 1\", \"field2\": \"some field value 2\", }", "hgetall h_key"},
+};
 
-  test_redis("hset h_key field1 some field value 1", "OK");
-  test_redis("hset h_key field2 some field value 2", "OK");
-  test_redis("hget h_key field1", "some field value 1");
-  test_redis("hget h_key field2", "some field value 2");
-  test_redis("hget h_key field3", "");
-  test_redis("hget h_missing_key field", "");
-  test_redis("hgetall h_key", "{ \"field1\": \"some field value 1\", \"field2\": \"some field value 2\", }");
+class RedisTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(RedisTest, tests, RedisTestData, redis_tests) {
+  trace << std::endl << "Executing this command on the redis server: " << data.command << std::endl;
+
+  const auto actual = redis(data.command);
+  assert.equal(actual, data.expected);
 }

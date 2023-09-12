@@ -4,15 +4,15 @@
 #include <iostream>
 #include <vector>
 
-#include "array_remove_duplicates.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given a sorted array |nums|, remove duplicates from it.
 // Remaining values are left in the same order.
 // Return the number of unique values in |nums|.
 // This is leetcode 26. Remove Duplicates from Sorted Array
 // https://leetcode.com/problems/remove-duplicates-from-sorted-array
-int sorted_array_remove_all_duplicates(std::vector<int>& nums) {
+size_t sorted_array_remove_all_duplicates(std::vector<int>& nums) {
   // Track previous starting at the first element.
   size_t previous_index = 0;
   // Consider duplicates starting with the second element - it's not possible
@@ -23,7 +23,7 @@ int sorted_array_remove_all_duplicates(std::vector<int>& nums) {
   // in |nums|.
   size_t swap_index = 1;
   // Count duplicate values found.
-  int duplicate_count = 0;
+  size_t duplicate_count = 0;
   // Walk forward over the array keeping track of the current index we want to
   // check for duplicates against, the previous index (probably don't need as
   // it's always current_index - 1 ?), and the index we've walked forward to
@@ -66,17 +66,20 @@ int sorted_array_remove_all_duplicates(std::vector<int>& nums) {
 // Return the number of elements in |nums|.
 // This is leetcode 80. Remove Duplicates from Sorted Array II
 // https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
-int sorted_array_remove_all_but_2_duplicates(std::vector<int>& nums) {
+size_t sorted_array_remove_all_but_2_duplicates(std::vector<int>& nums) {
   size_t previous_previous_index = 0;
   size_t previous_index = 1;
   size_t current_index = 2;
   size_t swap_index = 2;
   // Count duplicate values found.
-  int duplicate_count = 0;
+  size_t duplicate_count = 0;
   while (current_index < nums.size()) {
     if ((nums[previous_previous_index] == nums[previous_index] && nums[previous_index] == nums[current_index]) ||
         (nums[previous_index] > nums[current_index])) {
-      duplicate_count++;
+      // If we are looking at a value we swapped from further in the array, this isn't a real duplicate.
+      if (swap_index > previous_index) {
+        duplicate_count++;
+      }
       while(swap_index < nums.size() && nums[previous_previous_index] >= nums[swap_index] && nums[previous_index] >= nums[swap_index]) {
         swap_index++;
       }
@@ -95,51 +98,63 @@ int sorted_array_remove_all_but_2_duplicates(std::vector<int>& nums) {
   return nums.size() - duplicate_count;
 }
 
-void test_remove_all_duplicates(std::vector<int> nums, std::vector<int> expected_nums, int expected_count) {
-  std::cout << std::endl << "Removing duplicate elements from array:" << std::endl;
-  print_vector(nums);
+struct ArrayRemoveAllDuplicatesTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums;
+};
 
-  const auto count = sorted_array_remove_all_duplicates(nums);
-  nums.resize(count);
-  std::cout << "Remaining " << count << " elements:" << std::endl;
-  print_vector(nums);
-  std::cout << "Expected " << expected_count << " elements:" << std::endl;
-  print_vector(expected_nums);
+std::vector<ArrayRemoveAllDuplicatesTestData> array_remove_all_duplicates_tests = {
+  {std::vector<int>({1,2,3}), {1,2,2,3,3}},
+  {std::vector<int>({1,2}), {1,1,2}},
+  {std::vector<int>({1}), {1}},
+  {std::vector<int>({1,2,3,4}), {1,2,2,3,4}},
+  {std::vector<int>({1}), {1,1,1,1,1,1}},
+  {std::vector<int>({}), {}},
+  {std::vector<int>({1,3}), {1,1,1,3}},
+  {std::vector<int>({1,3}), {1,1,1,3,3,3}},
+  {std::vector<int>({1,3,4}), {1,1,1,3,3,3,4}},
+  {std::vector<int>({1,3,4}), {1,1,1,3,3,3,4,4,4}},
+  {std::vector<int>({1,2,3,4}), {1,2,3,4}},
+};
+
+class ArrayRemoveAllDuplicatesTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(ArrayRemoveAllDuplicatesTest, tests, ArrayRemoveAllDuplicatesTestData, array_remove_all_duplicates_tests) {
+  trace << std::endl << "Removing duplicate elements from array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto count = sorted_array_remove_all_duplicates(data.nums);
+  data.nums.resize(count);
+  trace << "Resulting array:" << std::endl;
+  trace.vector(data.nums);
+
+  assert.equal(data.nums, data.expected);
 }
 
-void test_remove_all_but_2_duplicates(std::vector<int> nums, std::vector<int> expected_nums, int expected_count) {
-  std::cout << std::endl << "Removing all but 2 duplicate elements from array:" << std::endl;
-  print_vector(nums);
+struct ArrayRemoveAllButTwoDuplicatesTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums;
+};
 
-  const auto count = sorted_array_remove_all_but_2_duplicates(nums);
-  nums.resize(count);
-  std::cout << "Remaining " << count << " elements:" << std::endl;
-  print_vector(nums);
-  std::cout << "Expected " << expected_count << " elements:" << std::endl;
-  print_vector(expected_nums);
-}
+std::vector<ArrayRemoveAllButTwoDuplicatesTestData> array_remove_all_but_2_duplicates_tests = {
+  {std::vector<int>({1,2,2,3,3}), {1,2,2,3,3}},
+  {std::vector<int>({1}), {1}},
+  {std::vector<int>({}), {}},
+  {std::vector<int>({1,1,2,2,3,3}), {1,1,2,2,3,3}},
+  {std::vector<int>({1,1,2,2,3,3}), {1,1,1,1,2,2,2,2,3,3,3,3}},
+  {std::vector<int>({1,2,3}), {1,2,3}},
+  {std::vector<int>({1,1}), {1,1,1,1,1,1}},
+  {std::vector<int>({1,1,2,2,3}), {1,1,1,2,2,3}},
+};
 
-int main_remove_duplicates() {
-  test_remove_all_duplicates({1,2,2,3,3}, {1,2,3}, 3);
-  test_remove_all_duplicates({1,1,2}, {1,2}, 2);
-  test_remove_all_duplicates({1}, {1}, 1);
-  test_remove_all_duplicates({1,2,2,3,4}, {1,2,3,4}, 4);
-  test_remove_all_duplicates({1,1,1,1,1,1}, {1}, 1);
-  test_remove_all_duplicates({}, {}, 0);
-  test_remove_all_duplicates({1,1,1,3}, {1,3}, 2);
-  test_remove_all_duplicates({1,1,1,3,3,3}, {1,3}, 2);
-  test_remove_all_duplicates({1,1,1,3,3,3,4}, {1,3,4}, 3);
-  test_remove_all_duplicates({1,1,1,3,3,3,4,4,4}, {1,3,4}, 3);
-  test_remove_all_duplicates({1,2,3,4}, {1,2,3,4}, 4);
+class ArrayRemoveAllButTwoDuplicatesTest : public TestCase {};
 
-  test_remove_all_but_2_duplicates({1,2,2,2,3,3}, {1,2,2,3,3}, 5);
-  test_remove_all_but_2_duplicates({1}, {1}, 1);
-  test_remove_all_but_2_duplicates({}, {}, 0);
-  test_remove_all_but_2_duplicates({1,1,2,2,3,3}, {1,1,2,2,3,3}, 6);
-  test_remove_all_but_2_duplicates({1,1,1,1,2,2,2,2,3,3,3,3}, {1,1,2,2,3,3}, 6);
-  test_remove_all_but_2_duplicates({1,2,3}, {1,2,3}, 3);
-  test_remove_all_but_2_duplicates({1,1,1,1,1,1}, {1,1}, 2);
-  test_remove_all_but_2_duplicates({1,1,1,2,2,3}, {1,1,2,2,3}, 5);
+TEST_CASE_WITH_DATA(ArrayRemoveAllButTwoDuplicatesTest, tests, ArrayRemoveAllButTwoDuplicatesTestData, array_remove_all_but_2_duplicates_tests) {
+  trace << std::endl << "Removing all but 2 duplicate elements from array:" << std::endl;
+  trace.vector(data.nums);
 
-  return 0;
+  const auto count = sorted_array_remove_all_but_2_duplicates(data.nums);
+  data.nums.resize(count);
+  trace << "Resulting array:" << std::endl;
+  trace.vector(data.nums);
+
+  assert.equal(data.nums, data.expected);
 }

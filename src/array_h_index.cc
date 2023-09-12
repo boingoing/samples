@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_h_index.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given an array of citation counts, |citations|, calculate the h-index
 // for the author. The h-index is the largest value, n, such that there
@@ -59,23 +59,27 @@ int h_index(std::vector<int>& citations) {
   return element_sum;
 }
 
-void test_h_index(std::vector<int> citations, int expected) {
-  std::cout << std::endl << "Finding the H-index for these citations:" << std::endl;
-  print_vector(citations);
+struct ArrayHIndexTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> citations;
+};
 
-  const auto actual = h_index(citations);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<ArrayHIndexTestData> array_h_index_tests = {
+  {2, {1,2,3}},
+  {1, {1,2,1}},
+  {3, {3,0,6,1,5}},
+  {1, {100}},
+  {2, {100, 15}},
+  {2, {100, 15, 0}},
+  {3, {100,15,4,0,0,0}},
+  {3, {1,7,9,4}},
+};
 
-int main_h_index() {
-  test_h_index({1,2,3}, 2);
-  test_h_index({1,2,1}, 1);
-  test_h_index({3,0,6,1,5}, 3);
-  test_h_index({100}, 1);
-  test_h_index({100, 15}, 2);
-  test_h_index({100, 15, 0}, 2);
-  test_h_index({100,15,4,0,0,0}, 3);
-  test_h_index({1,7,9,4}, 3);
+class ArrayHIndexTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(ArrayHIndexTest, tests, ArrayHIndexTestData, array_h_index_tests) {
+  trace << std::endl << "Finding the H-index for these citations:" << std::endl;
+  trace.vector(data.citations);
+
+  const auto actual = h_index(data.citations);
+  assert.equal(actual, data.expected);
 }

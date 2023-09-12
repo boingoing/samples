@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "graph_islands_identify.h"
 #include "test_islands.h"
+#include "test/TestCase.h"
 
 // A non-recursive solution to the "count islands" problem which also
 // identifies the islands in the grid.
@@ -19,7 +19,7 @@
 // in order to find the actual count of islands and full shape of each
 // island.
 
-#define VERBOSE_DEBUG 1
+#define VERBOSE_DEBUG 0
 
 #define island_type_small char
 #define island_type_large uint32_t
@@ -244,13 +244,6 @@ size_t count_islands(std::vector<std::vector<island_type>>& grid) {
   return count_unique_islands(equivalent_island_map);
 }
 
-template<typename island_type>
-void test_one_grid(std::vector<std::vector<island_type>> grid, size_t expected_count) {
-  const auto count = count_islands(grid);
-  std::cout << std::endl << "Found " << count << " islands (expected " << expected_count << ")." << std::endl;
-  std::cout << ((count == expected_count) ? "PASSED!" : "FAILED!") << std::endl;
-}
-
 // If there are going to be more island chunks than can be held in a char (island_type_small), expand
 // the elements of the grid vector.
 std::vector<std::vector<island_type_large>> convert_grid_to_large_id(std::vector<std::vector<island_type_small>>& grid) {
@@ -266,13 +259,30 @@ std::vector<std::vector<island_type_large>> convert_grid_to_large_id(std::vector
   return large_grid;
 }
 
-int main_identify_islands() {
+struct IdentifyIslandsTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<std::vector<char>> grid;
+};
+
+std::vector<IdentifyIslandsTestData> identify_islands_tests = {
+  {5, get_simple_grid()},
+  {2, get_medium_complexity_grid()},
+  {1, get_complex_grid()},
+};
+
+class IdentifyIslandsTest : public TestCase {
+ public:
+  template<typename island_type>
+  void testOneGrid(std::vector<std::vector<island_type>> grid, size_t expected_count) {
+    const auto count = count_islands(grid);
+    assert.equal(count, expected_count);
+  }
+};
+
+TEST_CASE_WITH_DATA(IdentifyIslandsTest, tests, IdentifyIslandsTestData, identify_islands_tests) {
+  testOneGrid(data.grid, data.expected);
+}
+
+TEST_CASE(IdentifyIslandsTest, huge_grid) {
   auto huge_grid = get_huge_grid();
-  test_one_grid(convert_grid_to_large_id(huge_grid), 6121);
-
-  test_one_grid(get_simple_grid(), 5);
-  test_one_grid(get_medium_complexity_grid(), 2);
-  test_one_grid(get_complex_grid(), 1);
-
-  return 0;
+  testOneGrid(convert_grid_to_large_id(huge_grid), 6121);
 }

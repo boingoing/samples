@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-#include "array_max_delta.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given an array |nums|, find the maximum delta between two
 // elements ei and ej where i < j.
@@ -114,39 +114,51 @@ int array_max_delta_sum(std::vector<int>& nums) {
   return delta_sum;
 }
 
-void test_array_max_delta(std::vector<int> nums, int expected_delta) {
-  std::cout << std::endl << "Searching for the max delta between two elements in array:" << std::endl;
-  print_vector(nums);
+struct ArrayMaxDeltaTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+};
 
-  const auto delta = array_max_delta(nums);
-  std::cout << "Found: " << delta << " (expected: " << expected_delta << ")" << std::endl;
+std::vector<ArrayMaxDeltaTestData> array_max_delta_tests = {
+  {3, {3,4,2,2,3,5,2,3}},
+  {0, {}},
+  {0, {1}},
+  {0, {1,1}},
+  {2, {1,2,3}},
+  {1, {2,3,1}},
+  {3, {2,3,1,2,3,4}},
+  {0, {3,2,1}},
+};
+
+class ArrayMaxDeltaTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(ArrayMaxDeltaTest, tests, ArrayMaxDeltaTestData, array_max_delta_tests) {
+  trace << std::endl << "Searching for the max delta between two elements in array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto delta = array_max_delta(data.nums);
+  assert.equal(delta, data.expected);
 }
 
-void test_array_max_delta_sum(std::vector<int> nums, int expected_delta) {
-  std::cout << std::endl << "Searching for the sum of max deltas each between two elements in array:" << std::endl;
-  print_vector(nums);
+struct ArrayMaxDeltaSumTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+};
 
-  const auto delta = array_max_delta_sum(nums);
-  std::cout << "Found: " << delta << " (expected: " << expected_delta << ")" << std::endl;
-}
+std::vector<ArrayMaxDeltaSumTestData> array_max_delta_sum_tests = {
+  {7, {7,1,5,3,6,4}},
+  {2, {1,2,3}},
+  {0, {}},
+  {0, {1}},
+  {0, {1,1}},
+  {8, {10,1,2,5,2,3,6,5,4,3,2,1}},
+  {15, {1,8,2,10}},
+};
 
-int main_max_delta() {
-  test_array_max_delta({3,4,2,2,3,5,2,3}, 3);
-  test_array_max_delta({}, 0);
-  test_array_max_delta({1}, 0);
-  test_array_max_delta({1,1}, 0);
-  test_array_max_delta({1,2,3}, 2);
-  test_array_max_delta({2,3,1}, 1);
-  test_array_max_delta({2,3,1,2,3,4}, 3);
-  test_array_max_delta({3,2,1}, 0);
+class ArrayMaxDeltaSumTest : public TestCase {};
 
-  test_array_max_delta_sum({7,1,5,3,6,4}, 7);
-  test_array_max_delta_sum({1,2,3}, 2);
-  test_array_max_delta_sum({}, 0);
-  test_array_max_delta_sum({1}, 0);
-  test_array_max_delta_sum({1,1}, 0);
-  test_array_max_delta_sum({10,1,2,5,2,3,6,5,4,3,2,1}, 8);
-  test_array_max_delta_sum({1,8,2,10}, 15);
+TEST_CASE_WITH_DATA(ArrayMaxDeltaSumTest, tests, ArrayMaxDeltaSumTestData, array_max_delta_sum_tests) {
+  trace << std::endl << "Searching for the sum of max deltas each between two elements in array:" << std::endl;
+  trace.vector(data.nums);
 
-  return 0;
+  const auto delta = array_max_delta_sum(data.nums);
+  assert.equal(delta, data.expected);
 }

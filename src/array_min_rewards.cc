@@ -7,10 +7,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_min_rewards.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 // Given a set of ratings where ratings[i] is the rating for individual i,
 // allocate the minimum number of rewards to each individual such that:
@@ -20,7 +20,7 @@
 // Return the minimum total number of rewards that can be allocated.
 // This is leetcode 135. Candy
 // https://leetcode.com/problems/candy
-int allocate_min_rewards(std::vector<int>& ratings) {
+size_t allocate_min_rewards(std::vector<int>& ratings) {
   if (ratings.size() < 2) {
     return ratings.size();
   }
@@ -142,33 +142,37 @@ int allocate_min_rewards(std::vector<int>& ratings) {
   return min_rewards + rewards_delta;
 }
 
-void test_allocate_min_rewards(std::vector<int> ratings, int expected) {
-  std::cout << std::endl << "Finding minimum number of rewards to allocate with ratings: ";
-  print_vector(ratings);
+struct AllocateMinRewardsTestData : TestCaseDataWithExpectedResult<size_t> {
+  std::vector<int> ratings;
+};
 
-  const auto actual = allocate_min_rewards(ratings);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<AllocateMinRewardsTestData> allocate_min_rewards_tests = {
+  {5, {1,0,2}},
+  {4, {1,2,2}},
+  {15, {4,3,2,0,1,5}},
+  {15, {5,1,0,2,3,4}},
+  {4, {3,3,3,3}},
+  {6, {2,4,2,4}},
+  {7, {2,4,2,4,2}},
+  {8, {4,2,4,2,4}},
+  {6, {4,2,4,2}},
+  {7, {1,3,2,2,1}},
+  {7, {1,6,10,8}},
+  {9, {1,6,10,8,7}},
+  {13, {1,6,10,8,7,3}},
+  {18, {1,6,10,8,7,3,2}},
+  {6, {3,2,1}},
+  {6, {1,2,3}},
+  {47, {1,2,3,5,4,3,2,1,4,3,2,1,3,2,1,1,2,3,4}},
+  {15, {2,3,4,5,3,2,4}},
+};
 
-int main_min_rewards() {
-  test_allocate_min_rewards({1,0,2}, 5);
-  test_allocate_min_rewards({1,2,2}, 4);
-  test_allocate_min_rewards({4,3,2,0,1,5}, 15);
-  test_allocate_min_rewards({5,1,0,2,3,4}, 15);
-  test_allocate_min_rewards({3,3,3,3}, 4);
-  test_allocate_min_rewards({2,4,2,4}, 6);
-  test_allocate_min_rewards({2,4,2,4,2}, 7);
-  test_allocate_min_rewards({4,2,4,2,4}, 8);
-  test_allocate_min_rewards({4,2,4,2}, 6);
-  test_allocate_min_rewards({1,3,2,2,1}, 7);
-  test_allocate_min_rewards({1,6,10,8}, 7);
-  test_allocate_min_rewards({1,6,10,8,7}, 9);
-  test_allocate_min_rewards({1,6,10,8,7,3}, 13);
-  test_allocate_min_rewards({1,6,10,8,7,3,2}, 18);
-  test_allocate_min_rewards({3,2,1}, 6);
-  test_allocate_min_rewards({1,2,3}, 6);
-  test_allocate_min_rewards({1,2,3,5,4,3,2,1,4,3,2,1,3,2,1,1,2,3,4}, 47);
-  test_allocate_min_rewards({2,3,4,5,3,2,4}, 15);
+class AllocateMinRewardsTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(AllocateMinRewardsTest, tests, AllocateMinRewardsTestData, allocate_min_rewards_tests) {
+  trace << std::endl << "Finding minimum number of rewards to allocate with ratings: ";
+  trace.vector(data.ratings);
+
+  const auto actual = allocate_min_rewards(data.ratings);
+  assert.equal(actual, data.expected);
 }

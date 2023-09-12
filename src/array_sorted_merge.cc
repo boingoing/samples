@@ -7,13 +7,16 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_sorted_merge.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Takes two sorted arrays and merges them.
-// |nums1| must have |n| elements at the back of the vector with value 0.
+// The first array, |nums1|, must have |m| + |n| total elements where m
+// are the elements to be considered part of |nums1| followed by |n| empty
+// elements with value 0.
+// The second array, |nums2|, must have size equal to |n|.
 // The elements from |nums2| will be sorted into |nums1| using up those
-// extra element slots.
+// empty element slots.
 // This is leetcode 88. Merge Sorted Array
 // https://leetcode.com/problems/merge-sorted-array/
 void merge(std::vector<int>& nums1, int m, std::vector<int>& nums2, int n) {
@@ -39,25 +42,34 @@ void merge(std::vector<int>& nums1, int m, std::vector<int>& nums2, int n) {
       current_biggest = nums2[current_nums2_index--];
     }
 
-    nums1[current_insert_point] = current_biggest;
-    current_insert_point--;
+    nums1[current_insert_point--] = current_biggest;
   }
 }
 
-void test_merge(std::vector<int> nums1, int m, std::vector<int> nums2, int n, std::vector<int> expected) {
-  std::cout << std::endl << "Merging two sorted arrays:" << std::endl;
-  std::cout << "nums1 = ";
-  print_vector(nums1);
-  std::cout << "nums2 = ";
-  print_vector(nums2);
+struct SortedArrayMergeTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums1;
+  std::vector<int> nums2;
+  int m;
+  int n;
+};
 
-  merge(nums1, m, nums2, n);
-  std::cout << "sorted = ";
-  print_vector(nums1);
-}
+std::vector<SortedArrayMergeTestData> sorted_array_merge_tests = {
+  {std::vector<int>({1,2,2,3,5,6}), {1,2,3,0,0,0}, {2,5,6}, 3, 3},
+  {std::vector<int>({1}), {0}, {1}, 0, 1},
+};
 
-int main_merge() {
-  test_merge({1,2,3,0,0,0}, 3, {2,5,6}, 3, {1,2,2,3,4,5});
-  test_merge({0}, 0, {1}, 1, {1});
-  return 0;
+class SortedArrayMergeTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(SortedArrayMergeTest, tests, SortedArrayMergeTestData, sorted_array_merge_tests) {
+  trace << std::endl << "Merging two sorted arrays:" << std::endl;
+  trace << "nums1 = ";
+  trace.vector(data.nums1);
+  trace << "nums2 = ";
+  trace.vector(data.nums2);
+
+  merge(data.nums1, data.m, data.nums2, data.n);
+  trace << "sorted = ";
+  trace.vector(data.nums1);
+
+  assert.equal(data.nums1, data.expected);
 }

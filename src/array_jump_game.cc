@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_jump_game.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given an array of numbers, treat each element as the maximum count of forward
 // steps which are allowed to be made from that element.
@@ -79,30 +79,42 @@ int min_jumps(std::vector<int>& nums) {
   return jump_count;
 }
 
-void test_can_solve(std::vector<int> nums, bool expected) {
-  std::cout << std::endl << "Looking to see if this jump game is solvable:" << std::endl;
-  print_vector(nums);
+struct JumpGameCanSolveTestData : TestCaseDataWithExpectedResult<bool> {
+  std::vector<int> nums;
+};
 
-  const auto actual = can_solve(nums);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
+std::vector<JumpGameCanSolveTestData> jump_game_can_solve_tests = {
+  {true, {2,3,1,1,4}},
+  {false, {3,2,1,0,4}},
+};
+
+class JumpGameCanSolveTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(JumpGameCanSolveTest, tests, JumpGameCanSolveTestData, jump_game_can_solve_tests) {
+  trace << std::endl << "Looking to see if this jump game is solvable:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto actual = can_solve(data.nums);
+  assert.equal(actual, data.expected);
 }
 
-void test_min_jumps(std::vector<int> nums, int expected) {
-  std::cout << std::endl << "Finding the minimum number of jumps to solve this jump game:" << std::endl;
-  print_vector(nums);
+struct JumpGameMinJumpsTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+};
 
-  const auto actual = min_jumps(nums);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<JumpGameMinJumpsTestData> jump_game_min_jumps_tests = {
+  {2, {5,3,1,1,1,1,4}},
+  {2, {2,3,1,1,4}},
+  {2, {2,3,0,1,4}},
+  {2, {1,2,3}},
+};
 
-int main_jump_game() {
-  test_can_solve({2,3,1,1,4}, true);
-  test_can_solve({3,2,1,0,4}, false);
+class JumpGameMinJumpsTest : public TestCase {};
 
-  test_min_jumps({5,3,1,1,1,1,4}, 2);
-  test_min_jumps({2,3,1,1,4}, 2);
-  test_min_jumps({2,3,0,1,4}, 2);
-  test_min_jumps({1,2,3}, 2);
+TEST_CASE_WITH_DATA(JumpGameMinJumpsTest, tests, JumpGameMinJumpsTestData, jump_game_min_jumps_tests) {
+  trace << std::endl << "Finding the minimum number of jumps to solve this jump game:" << std::endl;
+  trace.vector(data.nums);
 
-  return 0;
+  const auto actual = min_jumps(data.nums);
+  assert.equal(actual, data.expected);
 }

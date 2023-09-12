@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "hashmap_happy_number.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given a number, |n|, determine if it is a happy number.
 // A happy number is defined as one which may be decomposed into digits,
@@ -49,16 +49,20 @@ bool is_happy(int n) {
   return true;
 }
 
-void test_is_happy(int n, bool expected) {
-  std::cout << std::endl << "Determining if " << n << " is a happy number" << std::endl;
+struct HappyNumberTestData : TestCaseDataWithExpectedResult<bool> {
+  int n;
+};
 
-  const auto actual = is_happy(n);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<HappyNumberTestData> is_happy_number_tests = {
+  {true, 19},
+  {false, 2},
+};
 
-int main_happy_number() {
-  test_is_happy(19, true);
-  test_is_happy(2, false);
+class HappyNumberTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(HappyNumberTest, tests, HappyNumberTestData, is_happy_number_tests) {
+  trace << std::endl << "Determining if " << data.n << " is a happy number" << std::endl;
+
+  const auto actual = is_happy(data.n);
+  assert.equal(actual, data.expected);
 }

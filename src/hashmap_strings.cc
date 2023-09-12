@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "helpers.h"
-#include "test_helpers.h"
+#include "test/TestCase.h"
 
 // Given two strings, |s| and |t|, determine if they are isomorphic strings.
 // This is leetcode 205. Isomorphic Strings
@@ -173,73 +173,6 @@ std::vector<std::vector<std::string>> group_anagrams(std::vector<std::string>& s
   return groups;
 }
 
-void test_are_isomorphic(std::string s, std::string t, bool expected) {
-  std::cout << std::endl << "Looking to see if \"" << s << "\" and \"" << t << "\" are isomorphic" << std::endl;
-
-  const auto actual = are_isomorphic(s, t);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
-
-void test_words_follow_pattern(std::string pattern, std::string str, bool expected) {
-  std::cout << std::endl << "Looking to see if \"" << str << "\" follows the pattern \"" << pattern << "\"" << std::endl;
-
-  const auto actual = words_follow_pattern(pattern, str);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
-
-void test_is_anagram(std::string s, std::string t, bool expected) {
-  std::cout << std::endl << "Looking to see if \"" << t << "\" is an anagram of \"" << s << "\"" << std::endl;
-
-  const auto actual = is_anagram(s, t);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
-
-void test_group_anagrams(std::vector<std::string> strs, std::vector<std::vector<std::string>> expected) {
-  std::cout << std::endl << "Attempting to group anagrams in this set of strings:" << std::endl;
-  print_vector(strs);
-
-  const auto actual = group_anagrams(strs);
-  std::cout << "Found:" << std::endl;
-  for (const auto& v : actual) {
-    print_vector(v);
-  }
-
-   std::cout << "Expected:" << std::endl;
-  for (const auto& v : expected) {
-    print_vector(v);
-  }
-}
-
-int main_hashmap_strings() {
-  test_are_isomorphic("a", "b", true);
-  test_are_isomorphic("egg", "add", true);
-  test_are_isomorphic("foo", "bar", false);
-  test_are_isomorphic("paper", "title", true);
-  test_are_isomorphic("badc", "baba", false);
-
-  test_words_follow_pattern("aba", "foo bar foo", true);
-  test_words_follow_pattern("aba", "foo bar bar", false);
-  test_words_follow_pattern("aabb", "foo foo bar bar", true);
-  test_words_follow_pattern("abba", "dog cat cat dog", true);
-  test_words_follow_pattern("abba", "dog cat cat fish", false);
-  test_words_follow_pattern("aaaa", "dog cat cat dog", false);
-  test_words_follow_pattern("abba", "foo foo foo foo", false);
-  test_words_follow_pattern("badc", "foo bar foo baz", false);
-  test_words_follow_pattern("aa", "foo foo foo", false);
-  test_words_follow_pattern("aa", "foo foo bar", false);
-  test_words_follow_pattern("aaaa", "foo", false);
-
-  test_is_anagram("anagram", "nagaram", true);
-  test_is_anagram("rat", "car", false);
-  test_is_anagram("ab", "b", false);
-
-  test_group_anagrams({"eat","tea","tan","ate","nat","bat"}, {{"bat"},{"nat","tan"},{"ate","eat","tea"}});
-  test_group_anagrams({""}, {{}});
-  test_group_anagrams({"a"}, {{"a"}});
-
-  return 0;
-}
-
 struct StringsAreIsomorphicTestData : TestCaseDataWithExpectedResult<bool> {
   std::string s;
   std::string t;
@@ -259,7 +192,7 @@ TEST_CASE_WITH_DATA(StringsAreIsomorphicTest, tests, StringsAreIsomorphicTestDat
   trace << std::endl << "Looking to see if \"" << data.s << "\" and \"" << data.t << "\" are isomorphic" << std::endl;
 
   const auto actual = are_isomorphic(data.s, data.t);
-  assertEqual(actual, data.expected);
+  assert.equal(actual, data.expected);
 }
 
 struct WordsFollowPatternTestData : TestCaseDataWithExpectedResult<bool> {
@@ -287,5 +220,55 @@ TEST_CASE_WITH_DATA(WordsFollowPatternTest, tests, WordsFollowPatternTestData, w
   trace << std::endl << "Looking to see if \"" << data.str << "\" follows the pattern \"" << data.pattern << "\"" << std::endl;
 
   const auto actual = words_follow_pattern(data.pattern, data.str);
-  assertEqual(actual, data.expected);
+  assert.equal(actual, data.expected);
+}
+
+struct StringIsAnagramTestData : TestCaseDataWithExpectedResult<bool> {
+  std::string s;
+  std::string t;
+};
+
+std::vector<StringIsAnagramTestData> is_anagram_tests = {
+  {true, "anagram", "nagaram"},
+  {false, "rat", "car"},
+  {false, "ab", "b"},
+};
+
+class StringIsAnagramTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(StringIsAnagramTest, tests, StringIsAnagramTestData, is_anagram_tests) {
+  trace << std::endl << "Looking to see if \"" << data.t << "\" is an anagram of \"" << data.s << "\"" << std::endl;
+
+  const auto actual = is_anagram(data.s, data.t);
+  assert.equal(actual, data.expected);
+}
+
+struct GroupAnagramsTestData : TestCaseDataWithExpectedResult<std::vector<std::vector<std::string>>> {
+  std::vector<std::string> strs;
+};
+
+std::vector<GroupAnagramsTestData> group_anagrams_tests = {
+  {std::vector<std::vector<std::string>>({{"bat"},{"nat","tan"},{"ate","eat","tea"}}), {"eat","tea","tan","ate","nat","bat"}},
+  {{{}}, {"", ""}},
+  {std::vector<std::vector<std::string>>({{"a"}}), {"a"}},
+};
+
+class GroupAnagramsTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(GroupAnagramsTest, tests, GroupAnagramsTestData, group_anagrams_tests) {
+  trace << std::endl << "Attempting to group anagrams in this set of strings:" << std::endl;
+  trace.vector(data.strs);
+
+  const auto actual = group_anagrams(data.strs);
+  trace << "Found:" << std::endl;
+  for (const auto& v : actual) {
+    trace.vector(v);
+  }
+
+  trace << "Expected:" << std::endl;
+  for (const auto& v : data.expected) {
+    trace.vector(v);
+  }
+
+  // TODO: Verify actual is equivalent to expected.
 }

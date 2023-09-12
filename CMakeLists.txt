@@ -11,20 +11,28 @@ project (samples)
 
 include_directories (${PROJECT_SOURCE_DIR}/src)
 
-set (SIMPLE_OPTIMIZER_SOURCES ${PROJECT_SOURCE_DIR}/src/compiler_structs.cc
+set (TEST_LIB_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc)
+add_library (test_lib STATIC ${TEST_LIB_SOURCES})
+
+set (SIMPLE_OPTIMIZER_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/compiler_structs.cc
   ${PROJECT_SOURCE_DIR}/src/constant_fold.cc
   ${PROJECT_SOURCE_DIR}/src/constant_prop.cc
   ${PROJECT_SOURCE_DIR}/src/dead_code.cc
   ${PROJECT_SOURCE_DIR}/src/simple_optimizer.cc)
 add_executable (simple_optimizer ${SIMPLE_OPTIMIZER_SOURCES})
 
-set (NODE_GET_SUM_SOURCES ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc)
+set (NODE_GET_SUM_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc)
 add_executable (node_get_sum ${NODE_GET_SUM_SOURCES})
 
-set (UDP_BUFFER_SOURCES ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
+set (UDP_BUFFER_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
 add_executable (udp_buffer ${UDP_BUFFER_SOURCES})
 
-set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/test_helpers.cc
+set (ARRAY_STUFF_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc
   ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
   ${PROJECT_SOURCE_DIR}/src/array_h_index.cc
@@ -53,6 +61,7 @@ set (ARRAY_STUFF_SOURCES ${PROJECT_SOURCE_DIR}/src/test_helpers.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
   ${PROJECT_SOURCE_DIR}/src/test_islands.cc)
 add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
+target_link_libraries (array_stuff test_lib)
 
 if (MSVC)
   # disable some benign warnings on MSVC

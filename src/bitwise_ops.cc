@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "bitwise_ops.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given two binary numbers encoded as strings, return their sum,
 // also encoded as a string.
@@ -73,27 +73,40 @@ int count_bits_set(uint32_t n) {
   return count;
 }
 
-void test_binary_add(const std::string a, const std::string b, const std::string expected) {
-  std::cout << std::endl << "Attempting to binary add " << std::quoted(a) << " and " << std::quoted(b) << "..." << std::endl;
+struct BinaryStringAddTestData : TestCaseDataWithExpectedResult<std::string> {
+  std::string a;
+  std::string b;
+};
 
-  const auto actual = binary_add(a, b);
-  std::cout << "Found: " << std::quoted(actual) << " (expected: " << std::quoted(expected) << ")" << std::endl;
+std::vector<BinaryStringAddTestData> binary_string_add_tests = {
+  {"100", "11", "1"},
+  {"10101", "1010", "1011"},
+};
+
+class BinaryStringAddTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(BinaryStringAddTest, tests, BinaryStringAddTestData, binary_string_add_tests) {
+  trace << std::endl << "Attempting to binary add " << std::quoted(data.a) << " and " << std::quoted(data.b) << "..." << std::endl;
+
+  const auto actual = binary_add(data.a, data.b);
+  assert.equal(actual, data.expected);
 }
 
-void test_count_bits_set(uint32_t n, int expected) {
-  std::cout << std::endl << "Counting count of set bits in " << n << "..." << std::endl;
+struct CountBitsSetTestData : TestCaseDataWithExpectedResult<int> {
+  uint32_t n;
+};
 
-  const auto actual = count_bits_set(n);
-  std::cout << "Found: " << actual << " (expected: " << expected << ")" << std::endl;
-}
+std::vector<CountBitsSetTestData> count_bits_set_tests = {
+  {3, 0b00000000000000000000000000001011},
+  {1, 0b00000000000000000000000010000000},
+  {31, 0b11111111111111111111111111111101},
+};
 
-int main_bitwise_ops() {
-  test_binary_add("11", "1", "100");
-  test_binary_add("1010", "1011", "10101");
+class CountBitsSetTest : public TestCase {};
 
-  test_count_bits_set(0b00000000000000000000000000001011, 3);
-  test_count_bits_set(0b00000000000000000000000010000000, 1);
-  test_count_bits_set(0b11111111111111111111111111111101, 31);
+TEST_CASE_WITH_DATA(CountBitsSetTest, tests, CountBitsSetTestData, count_bits_set_tests) {
+  trace << std::endl << "Counting count of set bits in " << data.n << "..." << std::endl;
 
-  return 0;
+  const auto actual = count_bits_set(data.n);
+  assert.equal(actual, data.expected);
 }

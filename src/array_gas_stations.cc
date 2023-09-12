@@ -7,8 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "array_gas_stations.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 using std::vector;
 
@@ -79,23 +79,28 @@ int can_complete_circuit(vector<int>& gas, vector<int>& cost) {
   return -1;
 }
 
-void test_can_complete_circuit(vector<int> gas, vector<int> cost, int expected) {
-  std::cout << std::endl << "Looking to see if we can complete a circuit among gas stations with" << std::endl;
-  std::cout << "gas = ";
-  print_vector(gas);
-  std::cout << "cost = ";
-  print_vector(cost);
+struct GasStationCircuitTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> gas;
+  std::vector<int> cost;
+};
 
-  const auto actual = can_complete_circuit(gas, cost);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<GasStationCircuitTestData> gas_station_circuit_tests = {
+  {3, {1,2,3,4,5}, {3,4,5,1,2}},
+  {-1, {2,3,4}, {3,4,3}},
+  {4, {5,1,2,3,4}, {4,4,1,5,1}},
+  {0, {2}, {2}},
+  {0, {2,3}, {2,3}},
+};
 
-int main_gas_stations() {
-  test_can_complete_circuit({1,2,3,4,5}, {3,4,5,1,2}, 3);
-  test_can_complete_circuit({2,3,4}, {3,4,3}, -1);
-  test_can_complete_circuit({5,1,2,3,4}, {4,4,1,5,1}, 4);
-  test_can_complete_circuit({2}, {2}, 0);
-  test_can_complete_circuit({2,3}, {2,3}, 0);
+class GasStationCircuitTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(GasStationCircuitTest, tests, GasStationCircuitTestData, gas_station_circuit_tests) {
+  trace << std::endl << "Looking to see if we can complete a circuit among gas stations with" << std::endl;
+  trace << "gas = ";
+  trace.vector(data.gas);
+  trace << "cost = ";
+  trace.vector(data.cost);
+
+  const auto actual = can_complete_circuit(data.gas, data.cost);
+  assert.equal(actual, data.expected);
 }

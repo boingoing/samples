@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-#include "array_search.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given an array of sorted, unique numbers, |nums|, find the index within the
 // array of element |target| or the index where we would insert it if it is not
@@ -38,18 +38,23 @@ int binary_search(std::vector<int>& nums, int target) {
   return left;
 }
 
-void test_binary_search(std::vector<int> nums, int target, int expected) {
-  std::cout << std::endl << "Searching for the insert index of " << target << " within this array:" << std::endl;
-  print_vector(nums);
+struct ArraySearchTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+  int target;
+};
 
-  const auto actual = binary_search(nums, target);
-  std::cout << "Found: " << actual << " (expected: " << expected << ")" << std::endl;
-}
+std::vector<ArraySearchTestData> array_search_tests = {
+  {2, {1,3,5,6}, 5},
+  {1, {1,3,5,6}, 2},
+  {4, {1,3,5,6}, 7},
+};
 
-int main_array_search() {
-  test_binary_search({1,3,5,6}, 5, 2);
-  test_binary_search({1,3,5,6}, 2, 1);
-  test_binary_search({1,3,5,6}, 7, 4);
+class ArraySearchTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(ArraySearchTest, tests, ArraySearchTestData, array_search_tests) {
+  trace << std::endl << "Searching for the insert index of " << data.target << " within this array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto actual = binary_search(data.nums, data.target);
+  assert.equal(actual, data.expected);
 }

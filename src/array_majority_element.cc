@@ -5,9 +5,8 @@
 #include <map>
 #include <vector>
 
-#include "array_majority_element.h"
 #include "helpers.h"
-
+#include "test/TestCase.h"
 
 // Create a mapping of values from |nums| to the count of occurences of that
 // value in the array.
@@ -58,34 +57,47 @@ std::vector<int> array_majority_elements(std::vector<int>& nums) {
   return return_elements;
 }
 
-void test_array_majority_element(std::vector<int> nums, int expected_element) {
-  std::cout << std::endl << "Searching for the majority element (occurance > n/2) in array:" << std::endl;
-  print_vector(nums);
+struct ArrayMajorityElementTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+};
 
-  const auto e = array_majority_element(nums);
-  std::cout << "Found: " << e << std::endl << "Expected: " << expected_element << std::endl;
+std::vector<ArrayMajorityElementTestData> array_majority_element_tests = {
+  {3, {3,2,3}},
+  {2, {2,2,1,1,1,2,2}},
+  {1, {1}},
+};
+
+class ArrayMajorityElementTest : public TestCase {};
+
+TEST_CASE_WITH_DATA(ArrayMajorityElementTest, tests, ArrayMajorityElementTestData, array_majority_element_tests) {
+  trace << std::endl << "Searching for the majority element (occurance > n/2) in array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto e = array_majority_element(data.nums);
+  assert.equal(e, data.expected);
 }
 
-void test_array_majority_elements(std::vector<int> nums, std::vector<int> expected_elements) {
-  std::cout << std::endl << "Searching for the majority elements (occurance > n/3) in array:" << std::endl;
-  print_vector(nums);
+struct ArrayMajorityElementsTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums;
+};
 
-  const auto elements = array_majority_elements(nums);
-  std::cout << "Found: " << std::endl;
-  print_vector(elements);
-  std::cout << "Expected: " << std::endl;
-  print_vector(expected_elements);
-}
+std::vector<ArrayMajorityElementsTestData> array_majority_elements_tests = {
+  {std::vector<int>({3}), {3,2,3}},
+  {std::vector<int>({1,2}), {1,2}},
+  {std::vector<int>({1}), {1}},
+  {{}, {}},
+};
 
-int main_array_majority_element() {
-  test_array_majority_element({3,2,3}, 3);
-  test_array_majority_element({2,2,1,1,1,2,2}, 2);
-  test_array_majority_element({1}, 1);
+class ArrayMajorityElementsTest : public TestCase {};
 
-  test_array_majority_elements({3,2,3}, {3});
-  test_array_majority_elements({1,2}, {1,2});
-  test_array_majority_elements({1}, {1});
-  test_array_majority_elements({}, {});
+TEST_CASE_WITH_DATA(ArrayMajorityElementsTest, tests, ArrayMajorityElementsTestData, array_majority_elements_tests) {
+  trace << std::endl << "Searching for the majority elements (occurance > n/3) in array:" << std::endl;
+  trace.vector(data.nums);
 
-  return 0;
+  const auto elements = array_majority_elements(data.nums);
+  trace << "Found: " << std::endl;
+  trace.vector(elements);
+  trace << "Expected: " << std::endl;
+  trace.vector(data.expected);
+  assert.equal(elements, data.expected);
 }

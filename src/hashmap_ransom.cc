@@ -5,8 +5,8 @@
 #include <map>
 #include <unordered_map>
 
-#include "hashmap_ransom.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given a string, |note|, determine if it can be constructed entirely using
 // the letters given by a second string, |letters|.
@@ -38,17 +38,22 @@ bool can_construct(std::string& note, std::string& letters) {
   return true;
 }
 
-void test_can_construct(std::string note, std::string letters, bool expected) {
-  std::cout << std::endl << "Looking to see if \"" << note << "\" can be constructed using letters from \"" << letters << "\"" << std::endl;
+struct CanConstructTestData : TestCaseDataWithExpectedResult<bool> {
+  std::string note;
+  std::string letters;
+};
 
-  const auto actual = can_construct(note, letters);
-  std::cout << "Found: " << actual << " (expected " << expected << ")" << std::endl;
-}
+std::vector<CanConstructTestData> can_construct_tests = {
+  {false, "a", "b"},
+  {false, "aa", "ab"},
+  {true, "aa", "aab"},
+};
 
-int main_ransom() {
-  test_can_construct("a", "b", false);
-  test_can_construct("aa", "ab", false);
-  test_can_construct("aa", "aab", true);
+class CanConstructTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(CanConstructTest, tests, CanConstructTestData, can_construct_tests) {
+  trace << std::endl << "Looking to see if \"" << data.note << "\" can be constructed using letters from \"" << data.letters << "\"" << std::endl;
+
+  const auto actual = can_construct(data.note, data.letters);
+  assert.equal(actual, data.expected);
 }

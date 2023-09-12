@@ -7,9 +7,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "graph_islands_count.h"
 #include "helpers.h"
 #include "test_islands.h"
+#include "test/TestCase.h"
 
 // Grid holding only 0 or 1 values.
 // 0 => water
@@ -54,26 +54,30 @@ int largest_island(Grid& grid) {
   return largest;
 }
 
-void test_largest_island(Grid grid, int expected) {
-  std::cout << std::endl << "Finding largest island in grid:" << std::endl;
-  print_grid(grid);
+struct LargestIslandTestData : TestCaseDataWithExpectedResult<int> {
+  Grid grid;
+};
 
-  const auto count = largest_island(grid);
-  std::cout << std::endl << "Found " << count << " (expected " << expected << ")." << std::endl;
-}
+std::vector<LargestIslandTestData> largest_island_tests = {
+  {288, get_huge_grid()},
+  {16, get_simple_grid()},
+  {68, get_medium_complexity_grid()},
+  {79, get_complex_grid()},
 
-int main_largest_island() {
-  test_largest_island(get_huge_grid(), 288);
-  test_largest_island(get_simple_grid(), 16);
-  test_largest_island(get_medium_complexity_grid(), 68);
-  test_largest_island(get_complex_grid(), 79);
+  {5, {
+    {'1','0','1'},
+    {'0','1','1'},
+    {'1','1','0'},
+    {'0','0','1'},
+    {'0','1','1'}}},
+};
 
-  test_largest_island({
-      {'1','0','1'},
-      {'0','1','1'},
-      {'1','1','0'},
-      {'0','0','1'},
-      {'0','1','1'}}, 5);
+class LargestIslandTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(LargestIslandTest, tests, LargestIslandTestData, largest_island_tests) {
+  trace << std::endl << "Finding largest island in grid:" << std::endl;
+  trace.grid(data.grid);
+
+  const auto count = largest_island(data.grid);
+  assert.equal(count, data.expected);
 }

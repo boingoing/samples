@@ -7,9 +7,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "graph_islands_count.h"
 #include "helpers.h"
 #include "test_islands.h"
+#include "test/TestCase.h"
 
 // Grid holding only 0 or 1 values.
 // 0 => water
@@ -56,19 +56,23 @@ int count_islands(Grid& grid) {
   return count;
 }
 
-void test_count_islands(Grid grid, int expected) {
-  std::cout << std::endl << "Counting islands in grid:" << std::endl;
-  print_grid(grid);
+struct CountIslandsTestData : TestCaseDataWithExpectedResult<int> {
+  Grid grid;
+};
 
-  const auto count = count_islands(grid);
-  std::cout << std::endl << "Found " << count << " islands (expected " << expected << ")." << std::endl;
-}
+std::vector<CountIslandsTestData> count_islands_tests = {
+  {6121, get_huge_grid()},
+  {5, get_simple_grid()},
+  {2, get_medium_complexity_grid()},
+  {1, get_complex_grid()},
+};
 
-int main_count_islands() {
-  test_count_islands(get_huge_grid(), 6121);
-  test_count_islands(get_simple_grid(), 5);
-  test_count_islands(get_medium_complexity_grid(), 2);
-  test_count_islands(get_complex_grid(), 1);
+class CountIslandsTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(CountIslandsTest, tests, CountIslandsTestData, count_islands_tests) {
+  trace << std::endl << "Counting islands in grid:" << std::endl;
+  trace.grid(data.grid);
+
+  const auto count = count_islands(data.grid);
+  assert.equal(count, data.expected);
 }

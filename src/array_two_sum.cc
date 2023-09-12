@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "array_sudoku.h"
 #include "helpers.h"
+#include "test/TestCase.h"
 
 // Given a set of numbers and a target value, find two elements from the set
 // which sum to |target|.
@@ -39,21 +39,23 @@ std::vector<int> find_two_sum(std::vector<int>& nums, int target) {
   return {};
 }
 
-void test_two_sum(std::vector<int> nums, int target, std::vector<int> expected) {
-  std::cout << std::endl << "Looking for two elements which sum to " << target << " in ";
-  print_vector(nums);
+struct TwoSumTestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums;
+  int target;
+};
 
-  const auto actual = find_two_sum(nums, target);
-  std::cout << "Found:" << std::endl;
-  print_vector(actual);
-  std::cout << "Expected:" << std::endl;
-  print_vector(expected);
-}
+std::vector<TwoSumTestData> two_sum_tests = {
+  {std::vector<int>({0,1}), {2,7,11,15}, 9},
+  {std::vector<int>({1,2}), {3,2,4}, 6},
+  {std::vector<int>({0,1}), {3,3}, 6},
+};
 
-int main_two_sum() {
-  test_two_sum({2,7,11,15}, 9, {0,1});
-  test_two_sum({3,2,4}, 6, {1,2});
-  test_two_sum({3,3}, 6, {0,1});
+class TwoSumTest : public TestCase {};
 
-  return 0;
+TEST_CASE_WITH_DATA(TwoSumTest, tests, TwoSumTestData, two_sum_tests) {
+  trace << std::endl << "Looking for two elements which sum to " << data.target << " in ";
+  trace.vector(data.nums);
+
+  const auto actual = find_two_sum(data.nums, data.target);
+  assert.equivalent(actual, data.expected);
 }
