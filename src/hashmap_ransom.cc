@@ -5,7 +5,6 @@
 #include <map>
 #include <unordered_map>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given a string, |note|, determine if it can be constructed entirely using

@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given an array of sorted, unique numbers, |nums|, find the index within the

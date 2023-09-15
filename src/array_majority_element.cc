@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Create a mapping of values from |nums| to the count of occurences of that

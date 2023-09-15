@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given two binary numbers encoded as strings, return their sum,

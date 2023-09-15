@@ -10,6 +10,13 @@
 #include "test/TestCaseContainer.h"
 #include "test/TestCaseData.h"
 
+// On some platforms, "assert" is defined as a macro which will break our
+// attempt to use the name for a member of TestCase below. Undef it just
+// as a workaround. This isn't a serious project.
+#ifdef assert
+#undef assert
+#endif
+
 class TestCase {
  public:
   TestCase() : assert(trace) {}

@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Only detect space characters as white space.

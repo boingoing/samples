@@ -8,7 +8,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given a height map for some terrain, |height|, calculate how many units of

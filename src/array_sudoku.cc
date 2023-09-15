@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 std::vector<bool> is_number_found_set;

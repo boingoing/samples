@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given a sorted array |nums|, remove duplicates from it.

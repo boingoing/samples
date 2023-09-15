@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Mapping of integer phone number digit to the set of letters which that

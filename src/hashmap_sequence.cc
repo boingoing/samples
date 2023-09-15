@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 struct LongestConsecutiveSequenceTestData : TestCaseDataWithExpectedResult<int> {

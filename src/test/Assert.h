@@ -50,7 +50,7 @@ class Assert {
     Container container_copy = container;
     for (const auto& e : set) {
       bool found = false;
-      for (auto& iter = container_copy.cbegin(); iter != container_copy.cend(); iter++) {
+      for (auto iter = container_copy.cbegin(); iter != container_copy.cend(); iter++) {
         if (*iter == e) {
           found = true;
           container_copy.erase(iter);

@@ -8,7 +8,6 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 #define VERBOSE 0
@@ -67,7 +66,7 @@ class CacheSet {
 
   ValueType Get(KeyType key) {
     std::lock_guard guard(mutex_);
-    auto& iter = map_store_.find(key);
+    const auto& iter = map_store_.find(key);
 
     if (iter != map_store_.cend()) {
       replacement_algorithm_.NotifyUsed(key);
@@ -79,7 +78,7 @@ class CacheSet {
 
   void Set(KeyType key, ValueType value) {
     std::lock_guard guard(mutex_);
-    auto& iter = map_store_.find(key);
+    const auto& iter = map_store_.find(key);
 
     if (iter != map_store_.end()) {
 #if VERBOSE

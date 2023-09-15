@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given a set of numbers and a target value, find two elements from the set

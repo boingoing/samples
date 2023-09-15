@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 #define VERBOSE 0

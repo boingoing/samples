@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 std::random_device device;

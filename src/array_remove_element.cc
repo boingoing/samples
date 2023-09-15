@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Remove all elements matching |val| from the |nums| vector.

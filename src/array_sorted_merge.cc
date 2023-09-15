@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Takes two sorted arrays and merges them.

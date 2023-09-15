@@ -5,7 +5,6 @@
 #include <map>
 #include <unordered_map>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given two strings, |s| and |t|, determine if they are isomorphic strings.

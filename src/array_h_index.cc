@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given an array of citation counts, |citations|, calculate the h-index

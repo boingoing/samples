@@ -1,6 +1,7 @@
 #ifndef __test_Logger_h__
 #define __test_Logger_h__
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>

@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given an array, |nums|, shift the elements in the array right |k| times.

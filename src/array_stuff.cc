@@ -3,8 +3,6 @@
 
 #include "test/TestCaseContainer.h"
 
-#include "helpers.h"
-
 int main(int argc, const char** argv) {
   std::vector<std::string> args;
   for (int i = 0; i < argc; i++) {

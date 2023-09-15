@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 // Given an array |nums|, find the maximum delta between two

@@ -6,11 +6,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "helpers.h"
 #include "test/TestCase.h"
 
 std::unordered_map<std::string, std::string> key_value_store;
-std::unordered_map<std::string, std::unordered_map<std::string, std::string>> key_field_value_store;
+std::unordered_map<std::string, std::map<std::string, std::string>> key_field_value_store;
 
 // Find the next word in |str| beginning at |cur_index| and ending at the next
 // space character.
