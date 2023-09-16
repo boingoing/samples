@@ -50,7 +50,6 @@ class DistributeChickenTest : public TestCase {
 
     cur = count / 3;
     boxes.push_back(cur);
-    count -= cur * 3;
 
     return boxes;
   }
