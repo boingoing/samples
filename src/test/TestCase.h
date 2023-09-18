@@ -44,6 +44,7 @@ class TestCase {
       setResult(TestResult::Disabled);
       break;
     case TestCaseFlag::ExpectPass:
+      assert.resetFailStatus();
       setResult(TestResult::Pass);
       runImpl();
       if (assert.isFailed()) {
@@ -96,11 +97,7 @@ base_class##_##test_name base_class##_##test_name::instance_; \
 TEST_CASE_COMMON_BASE(base_class, test_name, flags, data_type, data_set) \
 void base_class##_##test_name::runImpl() { \
   for (auto& d: data_) { \
-    assert.resetFailStatus(); \
     runImpl(d); \
-    if (assert.isFailed()) { \
-      setResult(TestResult::Fail); \
-    } \
   } \
 } \
 void base_class##_##test_name::runImpl(data_type& data)
