@@ -57,6 +57,7 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/math_make_change.cc
   ${PROJECT_SOURCE_DIR}/src/random_select.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
+  ${PROJECT_SOURCE_DIR}/src/string_palindromes.cc
   ${PROJECT_SOURCE_DIR}/src/string_paren_parsing.cc
   ${PROJECT_SOURCE_DIR}/src/test_islands.cc
   ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
