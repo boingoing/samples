@@ -21,7 +21,6 @@ class TestCase {
  public:
   TestCase() : assert(trace) {}
   virtual ~TestCase() {}
-  virtual TestResult run() = 0;
   virtual std::string getName() const = 0;
   virtual std::string getBaseClassName() const = 0;
   virtual std::string getFullName() const = 0;
@@ -38,6 +37,25 @@ class TestCase {
   void setResult(TestResult result) {
     result_ = result;
   }
+
+  TestResult run() {
+    switch (getFlags()) {
+    case TestCaseFlag::Disabled:
+      setResult(TestResult::Disabled);
+      break;
+    case TestCaseFlag::ExpectPass:
+      setResult(TestResult::Pass);
+      runImpl();
+      if (assert.isFailed()) {
+        setResult(TestResult::Fail);
+      }
+      break;
+    }
+    return getResult();
+  }
+
+ protected:
+  virtual void runImpl() = 0;
 
  private:
   TestResult result_;
@@ -69,34 +87,28 @@ class base_class##_##test_name : public base_class { \
   TestCaseFlag getFlags() const override { \
     return flags; \
   } \
+  void runImpl() override; \
   void runImpl(data_type& data); \
-  TestResult run() override { \
-    switch (getFlags()) { \
-    case TestCaseFlag::Disabled: \
-      setResult(TestResult::Disabled); \
-      break; \
-    case TestCaseFlag::ExpectPass: \
-      setResult(TestResult::Pass); \
-      for (auto& d: data_) { \
-        assert.resetFailStatus(); \
-        runImpl(d); \
-        if (assert.isFailed()) { \
-          setResult(TestResult::Fail); \
-        } \
-      } \
-      break; \
-    } \
-    return getResult(); \
-  } \
 }; \
 base_class##_##test_name base_class##_##test_name::instance_; \
-void base_class##_##test_name::runImpl(data_type& data)
 
 #define TEST_CASE_WITH_DATA_BASE(base_class, test_name, flags, data_type, data_set) \
-TEST_CASE_COMMON_BASE(base_class, test_name, flags, data_type, data_set)
+TEST_CASE_COMMON_BASE(base_class, test_name, flags, data_type, data_set) \
+void base_class##_##test_name::runImpl() { \
+  for (auto& d: data_) { \
+    assert.resetFailStatus(); \
+    runImpl(d); \
+    if (assert.isFailed()) { \
+      setResult(TestResult::Fail); \
+    } \
+  } \
+} \
+void base_class##_##test_name::runImpl(data_type& data)
 
 #define TEST_CASE_BASE(base_class, test_name, flags) \
-TEST_CASE_COMMON_BASE(base_class, test_name, flags, TestCaseData, {{}})
+TEST_CASE_COMMON_BASE(base_class, test_name, flags, TestCaseData, {{}}) \
+void base_class##_##test_name::runImpl(TestCaseData& data) { } \
+void base_class##_##test_name::runImpl()
 
 #define TEST_CASE(base_class, test_name) \
 TEST_CASE_BASE(base_class, test_name, TestCaseFlag::ExpectPass)

@@ -5,6 +5,7 @@
 
 #include "test/TestCaseContainer.h"
 
+#include "test/AutostartStopwatch.h"
 #include "test/Constants.h"
 #include "test/TestCase.h"
 
@@ -38,10 +39,12 @@ void TestCaseContainer::add(TestCase* tc) {
 // static
 TestResult TestCaseContainer::runOneTest(TestCase* tc) {
   if (shouldRunTest(tc, filter_)) {
+    AutostartStopwatch timer;
     tc->run();
     if (verbose_) {
       std::cout << std::endl << tc->getFullName() << ":" << std::endl;
       std::cout << tc->getBuffer() << std::endl;
+      std::cout << "Time taken: " << timer.elapsed() << "ns" << std::endl;
     }
   } else {
     tc->setResult(TestResult::Skip);
