@@ -1,9 +1,12 @@
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "test/TestCase.h"
 
@@ -88,5 +91,116 @@ TEST_CASE_WITH_DATA(LongestConsecutiveSequenceTest, tests, LongestConsecutiveSeq
   trace.vector(data.nums);
 
   const auto actual = longest_consecutive_sequence(data.nums);
+  assert.equal(actual, data.expected);
+}
+
+struct SmallestMissingPositiveIntegerTestData : TestCaseDataWithExpectedResult<int> {
+  std::vector<int> nums;
+};
+
+std::vector<SmallestMissingPositiveIntegerTestData> smallest_missing_positive_integer_tests = {
+  {5, {1,3,6,4,1,2}},
+  {4, {1,2,3}},
+  {4, {3,2,1}},
+  {1, {2}},
+  {1, {}},
+  {1, {0}},
+  {1, {-1}},
+  {2, {1}},
+  {1, {100}},
+  {2, {1,1,1,1,1,1}},
+  {4, {1,2,3,5,6,7}},
+  {5, {-1,0,1,2,3,4,200}},
+  {5, {-1,0,1,2,3,4}},
+  {1, {-1,-2,-3}},
+};
+
+// Given an array of integers, return the smallest positive integer not found
+// in the array.
+// ex: [4,5,6] => 1
+//     [1,2,3] => 4
+class SmallestMissingPositiveIntegerTest : public TestCase {
+ protected:
+
+  int smallest_missing_positive_integer_obvious(std::vector<int> nums) {
+    // Track numbers seen while traversing |nums|.
+    std::set<int> seen_n;
+    // The smallest number we haven't seen.
+    int current_smallest = 1;
+
+    for (const auto& n : nums) {
+      seen_n.insert(n);
+
+      // We just saw the number we're currently tracking as the smallest one
+      // we haven't yet seen. Find the next smallest number which we haven't
+      // yet seen.
+      if (n == current_smallest) {
+        // Start at the next integer and keep searching forward until the number
+        // is not in our set of numbers we've seen.
+        current_smallest = n+1;
+        while (seen_n.count(current_smallest) > 0) {
+          current_smallest++;
+        }
+      }
+    }
+
+    return current_smallest;
+  }
+
+  int smallest_missing_positive_integer_sorting(std::vector<int> &nums) {
+    // Zero-size vector, just use 1.
+    if (nums.size() == 0) {
+      return 1;
+    }
+    // Vector of a single element. If it's 1, we need to return 2. Otherwise 1.
+    if (nums.size() == 1) {
+      if (nums[0] == 1) {
+        return 2;
+      }
+      return 1;
+    }
+
+    // Sort the elements of the vector.
+    std::sort(nums.begin(), nums.end());
+
+    // If the largest element is negative or zero, use 1.
+    if (nums.back() < 1) {
+      return 1;
+    }
+
+    // Start by assuming the smallest missing number is 1.
+    int current_smallest = 1;
+    // Walk forward over the array.
+    for (const auto& cur : nums) {
+      // We might have many elements < 1 which we can just ignore.
+      if (cur < current_smallest) {
+        continue;
+      }
+      // The first number to be larger than the smallest integer we're tracking
+      // indicates there's a gap between the previous at least one integer wide.
+      if (cur > current_smallest) {
+        return current_smallest;
+      }
+      // When cur == current_smallest the next possible smallest missing integer
+      // is cur + 1, the next integer.
+      current_smallest = cur + 1;
+    }
+    return current_smallest;
+  }
+};
+
+TEST_CASE_WITH_DATA(SmallestMissingPositiveIntegerTest, obvious_test, SmallestMissingPositiveIntegerTestData, smallest_missing_positive_integer_tests) {
+  trace << std::endl << "Finding the smallest missing positive integer (via hashmap) in this array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto actual = smallest_missing_positive_integer_obvious(data.nums);
+  assert.equal(actual, data.expected);
+}
+
+TEST_CASE_WITH_DATA(SmallestMissingPositiveIntegerTest, sorted_test, SmallestMissingPositiveIntegerTestData, smallest_missing_positive_integer_tests) {
+  trace << std::endl << "Finding the smallest missing positive integer (via sorting) in this array:" << std::endl;
+  trace.vector(data.nums);
+
+  const auto actual = smallest_missing_positive_integer_sorting(data.nums);
   assert.equal(actual, data.expected);
 }
