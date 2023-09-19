@@ -44,6 +44,7 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
   ${PROJECT_SOURCE_DIR}/src/bitwise_ops.cc
   ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc
+  ${PROJECT_SOURCE_DIR}/src/graph_city_skyline.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_count.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_identify.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_size.cc
