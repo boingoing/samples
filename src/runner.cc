@@ -22,6 +22,8 @@ int main(int argc, const char** argv) {
     }
   }
 
+  std::cout << "Simple unit test runner" << std::endl << std::endl;
+
   TestCaseContainer::runAllTests();
 
   return 0;

@@ -21,10 +21,11 @@ class TestCase {
  public:
   TestCase() : assert(trace) {}
   virtual ~TestCase() {}
+
   virtual std::string getName() const = 0;
   virtual std::string getBaseClassName() const = 0;
   virtual std::string getFullName() const = 0;
-  virtual TestCaseFlag getFlags() const = 0;
+  virtual size_t getTestCaseCount() const = 0;
 
   std::string getBuffer() const {
     return trace.getBuffer();
@@ -38,28 +39,47 @@ class TestCase {
     result_ = result;
   }
 
+  const TestCaseStats& getStats() const {
+    return stats_;
+  }
+
+  TestCaseFlag getFlags() const {
+    return flags_;
+  }
+
+  void setFlags(TestCaseFlag add) {
+    flags_ |= add;
+  }
+
   TestResult run() {
-    switch (getFlags()) {
-    case TestCaseFlag::Disabled:
+    if ((getFlags() & TestCaseFlag::Disabled) == TestCaseFlag::Disabled) {
       setResult(TestResult::Disabled);
-      break;
-    case TestCaseFlag::ExpectPass:
+    } else if ((getFlags() & TestCaseFlag::Skip) == TestCaseFlag::Skip) {
+      setResult(TestResult::Skip);
+    } else if ((getFlags() & TestCaseFlag::ExpectPass) == TestCaseFlag::ExpectPass) {
       assert.resetFailStatus();
-      setResult(TestResult::Pass);
       runImpl();
       if (assert.isFailed()) {
         setResult(TestResult::Fail);
+      } else {
+        setResult(TestResult::Pass);
       }
-      break;
     }
+    aggregate(getResult());
     return getResult();
   }
 
  protected:
   virtual void runImpl() = 0;
 
+  void aggregate(TestResult result) {
+    stats_.aggregate(result);
+  }
+
  private:
   TestResult result_;
+  TestCaseStats stats_;
+  TestCaseFlag flags_;
 
  protected:
   Logger trace;
@@ -74,6 +94,7 @@ class base_class##_##test_name : public base_class { \
  public: \
   base_class##_##test_name() { \
     TestCaseContainer::add(this); \
+    setFlags(flags); \
   } \
   ~base_class##_##test_name() = default; \
   std::string getName() const override { \
@@ -85,25 +106,40 @@ class base_class##_##test_name : public base_class { \
   std::string getFullName() const override { \
     return #base_class "_" #test_name; \
   } \
-  TestCaseFlag getFlags() const override { \
-    return flags; \
-  } \
+  size_t getTestCaseCount() const override; \
   void runImpl() override; \
   void runImpl(data_type& data); \
 }; \
-base_class##_##test_name base_class##_##test_name::instance_; \
+base_class##_##test_name base_class##_##test_name::instance_;
 
 #define TEST_CASE_WITH_DATA_BASE(base_class, test_name, flags, data_type, data_set) \
 TEST_CASE_COMMON_BASE(base_class, test_name, flags, data_type, data_set) \
+size_t base_class##_##test_name::getTestCaseCount() const { \
+  return data_.size(); \
+} \
 void base_class##_##test_name::runImpl() { \
+  bool did_any_fail = false; \
   for (auto& d: data_) { \
+    assert.resetFailStatus(); \
     runImpl(d); \
+    if (assert.isFailed()) { \
+      did_any_fail = true; \
+      aggregate(TestResult::Fail); \
+    } else { \
+      aggregate(TestResult::Pass); \
+    } \
+  } \
+  if (did_any_fail) { \
+    assert.fail(); \
   } \
 } \
 void base_class##_##test_name::runImpl(data_type& data)
 
 #define TEST_CASE_BASE(base_class, test_name, flags) \
 TEST_CASE_COMMON_BASE(base_class, test_name, flags, TestCaseData, {{}}) \
+size_t base_class##_##test_name::getTestCaseCount() const { \
+  return 1; \
+} \
 void base_class##_##test_name::runImpl(TestCaseData& data) { } \
 void base_class##_##test_name::runImpl()
 

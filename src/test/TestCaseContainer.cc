@@ -37,19 +37,18 @@ void TestCaseContainer::add(TestCase* tc) {
 }
 
 // static
-TestResult TestCaseContainer::runOneTest(TestCase* tc) {
-  if (shouldRunTest(tc, filter_)) {
-    AutostartStopwatch timer;
-    tc->run();
-    if (verbose_) {
-      std::cout << std::endl << tc->getFullName() << ":" << std::endl;
-      std::cout << tc->getBuffer() << std::endl;
-      std::cout << "Time taken: " << timer.elapsed() << "ns" << std::endl;
-    }
-  } else {
-    tc->setResult(TestResult::Skip);
+const TestCaseStats& TestCaseContainer::runOneTest(TestCase* tc) {
+  if (!shouldRunTest(tc, filter_)) {
+    tc->setFlags(TestCaseFlag::Skip);
   }
-  return tc->getResult();
+  AutostartStopwatch timer;
+  tc->run();
+  if (verbose_) {
+    std::cout << std::endl << tc->getFullName() << ":" << std::endl;
+    std::cout << tc->getBuffer() << std::endl;
+    std::cout << "Time taken: " << timer.elapsed() << "ns" << std::endl;
+  }
+  return tc->getStats();
 }
 
 // static
@@ -59,7 +58,7 @@ void TestCaseContainer::runAllTests() {
       std::cout << "Running " << base_name_map_pair.first << " tests..." << std::endl;
     }
     for (const auto& name_tc_pair : base_name_map_pair.second) {
-      aggregate(runOneTest(name_tc_pair.second));
+      stats_ += runOneTest(name_tc_pair.second);
     }
   }
 
@@ -90,23 +89,4 @@ void TestCaseContainer::setFilter(const std::string& filter) {
 // static
 void TestCaseContainer::enableVerbose() {
   verbose_ = true;
-}
-
-// static
-void TestCaseContainer::aggregate(TestResult result) {
-  switch (result) {
-  case TestResult::Fail:
-    stats_.fail_count++;
-    break;
-  case TestResult::Pass:
-    stats_.pass_count++;
-    break;
-  case TestResult::Skip:
-    stats_.skip_count++;
-    break;
-  case TestResult::Disabled:
-    stats_.disable_count++;
-    break;
-  }
-  stats_.run_count++;
 }

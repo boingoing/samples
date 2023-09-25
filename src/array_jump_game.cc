@@ -31,7 +31,7 @@ bool can_solve(std::vector<int>& nums) {
 
   // Walk backwards over the array and search for a from-element with value
   // great enough to walk to the next position - starting with the last index.
-  for (int index = nums.size() - 2; index >= 0; index--) {
+  for (int index = static_cast<int>(nums.size()) - 2; index >= 0; index--) {
     // Jumping from |index| to the next position.
     // We need to increment the number of steps required.
     current_steps++;

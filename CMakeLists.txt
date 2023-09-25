@@ -12,6 +12,7 @@ project (samples)
 include_directories (${PROJECT_SOURCE_DIR}/src)
 
 set (TEST_LIB_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/test/Constants.cc
   ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc)
 add_library (test_lib STATIC ${TEST_LIB_SOURCES})
 
@@ -23,7 +24,7 @@ set (SIMPLE_OPTIMIZER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/simple_optimizer.cc)
 add_executable (simple_optimizer ${SIMPLE_OPTIMIZER_SOURCES})
 
-set (ARRAY_STUFF_SOURCES
+set (RUNNER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc
   ${PROJECT_SOURCE_DIR}/src/array_combinations.cc
   ${PROJECT_SOURCE_DIR}/src/array_gas_stations.cc
@@ -39,7 +40,6 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/array_remove_element.cc
   ${PROJECT_SOURCE_DIR}/src/array_search.cc
   ${PROJECT_SOURCE_DIR}/src/array_sorted_merge.cc
-  ${PROJECT_SOURCE_DIR}/src/array_stuff.cc
   ${PROJECT_SOURCE_DIR}/src/array_sudoku.cc
   ${PROJECT_SOURCE_DIR}/src/array_two_sum.cc
   ${PROJECT_SOURCE_DIR}/src/bitwise_ops.cc
@@ -57,13 +57,14 @@ set (ARRAY_STUFF_SOURCES
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
   ${PROJECT_SOURCE_DIR}/src/math_make_change.cc
   ${PROJECT_SOURCE_DIR}/src/random_select.cc
+  ${PROJECT_SOURCE_DIR}/src/runner.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
   ${PROJECT_SOURCE_DIR}/src/string_palindromes.cc
   ${PROJECT_SOURCE_DIR}/src/string_paren_parsing.cc
   ${PROJECT_SOURCE_DIR}/src/test_islands.cc
   ${PROJECT_SOURCE_DIR}/src/udp_buffer.cc)
-add_executable (array_stuff ${ARRAY_STUFF_SOURCES})
-target_link_libraries (array_stuff test_lib)
+add_executable (runner ${RUNNER_SOURCES})
+target_link_libraries (runner test_lib)
 
 if (MSVC)
   # disable some benign warnings on MSVC

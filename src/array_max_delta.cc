@@ -55,8 +55,8 @@ int array_max_delta_sum(std::vector<int>& nums) {
 
   // Start by searching for the max value for the current window.
   SearchState state = SearchState::FindMaxValue;
-  size_t current_max_value_index = nums.size() - 1;
-  size_t current_min_value_index = current_max_value_index;
+  int current_max_value_index = static_cast<int>(nums.size()) - 1;
+  int current_min_value_index = current_max_value_index;
   int delta_sum = 0;
 
   // Walk backwards over the array.
