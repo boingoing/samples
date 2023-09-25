@@ -1,7 +1,20 @@
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #include "test/TestCaseContainer.h"
+
+void print_help() {
+  std::cout << "Usage: runner [--filter str] [--verbose]" << std::endl << std::endl;
+  std::cout << "Options:" << std::endl;
+  std::cout << std::setw(2) << "" << std::left << std::setw(16) << "--filter str";
+  std::cout << "Filter and only execute test cases with names matching str" << std::endl;
+  std::cout << std::setw(2) << "" << std::left << std::setw(16) << "--help";
+  std::cout << "Display this usage information" << std::endl;
+  std::cout << std::setw(2) << "" << std::left << std::setw(16) << "--verbose";
+  std::cout << "Enable verbose tracing" << std::endl;
+}
 
 int main(int argc, const char** argv) {
   std::vector<std::string> args;
@@ -9,7 +22,9 @@ int main(int argc, const char** argv) {
     args.emplace_back(argv[i]);
   }
 
-  for (auto iter = args.cbegin(); iter != args.cend(); iter++) {
+  std::cout << "Simple unit test runner" << std::endl << std::endl;
+
+  for (auto iter = args.cbegin() + 1; iter != args.cend(); iter++) {
     const auto& arg = *iter;
     if (arg == "--verbose") {
       TestCaseContainer::enableVerbose();
@@ -19,10 +34,15 @@ int main(int argc, const char** argv) {
         break;
       }
       TestCaseContainer::setFilter(*iter);
+    } else if (arg == "--help") {
+      print_help();
+      return 0;
+    } else {
+      std::cout << "Unknown option: " << std::quoted(arg) << std::endl;
+      print_help();
+      return -1;
     }
   }
-
-  std::cout << "Simple unit test runner" << std::endl << std::endl;
 
   TestCaseContainer::runAllTests();
 
