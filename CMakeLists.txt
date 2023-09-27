@@ -46,6 +46,7 @@ set (RUNNER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/get_sum_node_network.cc
   ${PROJECT_SOURCE_DIR}/src/graph_city_skyline.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_count.cc
+  ${PROJECT_SOURCE_DIR}/src/graph_islands_enclosed_space.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_identify.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_size.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_cache.cc
