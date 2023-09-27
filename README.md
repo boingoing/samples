@@ -4,7 +4,7 @@ Just a repo I store solutions to problems I thought were interesting.
 
 Maybe I saw these during an interview, interview prep, or while building some personal project. Keeping the problems and solutions here mainly as a study aide.
 
-I have tried to keep each of the implementations time-boxed to approximate an interview question. After the initial implementation, only cleaning-up and adding documentaiton. To that end, the solutions may not be optimal or even very good. They should all build and pass their unit tests, though. Code here comes with no other waranty of fitness.
+I have tried to keep each of the implementations time-boxed to approximate an interview question. After the initial implementation, only cleaning-up and adding documentaiton. To that end, the solutions may not be optimal or even very good. They should all build and pass their unit tests, though. Code here comes with no other warranty of fitness.
 
 ## Building
 
