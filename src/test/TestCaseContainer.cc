@@ -38,12 +38,13 @@ void TestCaseContainer::add(TestCase* tc) {
 
 // static
 const TestCaseStats& TestCaseContainer::runOneTest(TestCase* tc) {
-  if (!shouldRunTest(tc, filter_)) {
+  const auto should_skip = !shouldRunTest(tc, filter_);
+  if (should_skip) {
     tc->setFlags(TestCaseFlag::Skip);
   }
   AutostartStopwatch timer;
   tc->run();
-  if (verbose_) {
+  if (!should_skip && verbose_) {
     std::cout << std::endl << tc->getFullName() << ":" << std::endl;
     std::cout << tc->getBuffer() << std::endl;
     std::cout << "Time taken: " << timer.elapsed() << "ns" << std::endl;
