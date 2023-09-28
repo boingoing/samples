@@ -49,6 +49,7 @@ set (RUNNER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/graph_islands_enclosed_space.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_identify.cc
   ${PROJECT_SOURCE_DIR}/src/graph_islands_size.cc
+  ${PROJECT_SOURCE_DIR}/src/hashmap_backup_set.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_cache.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_duplicates.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_happy_number.cc
