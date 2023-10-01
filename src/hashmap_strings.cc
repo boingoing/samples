@@ -276,3 +276,56 @@ TEST_CASE_WITH_DATA(GroupAnagramsTest, tests, GroupAnagramsTestData, group_anagr
 
   // TODO: Verify actual is equivalent to expected.
 }
+
+struct ShortestUniqueSubstringTestData : TestCaseDataWithExpectedResult<std::string> {
+  std::string str;
+};
+
+std::vector<ShortestUniqueSubstringTestData> shortest_unique_substring_tests = {
+  {"aa", "abaab"},
+  {"", ""},
+  {"aa", "aa"},
+  {"a", "abb"},
+  {"a", "a"},
+  {"b", "aabcc"},
+  {"aa", "cccbbbaa"},
+};
+
+class ShortestUniqueSubstringTest : public TestCase {
+ protected:
+
+  // Find the shortest unique substring in |str|.
+  std::string get_shortest_unique_substring(std::string& str) {
+    // Map each substring in |str| to an occurence count.
+    std::map<std::string, size_t> substring_count_map;
+
+    // Create a mapping of every substring in |str| to the occurence
+    // count of that substring.
+    for (size_t len = 1; len <= str.size(); len++) {
+      for (size_t start = 0; start + len <= str.size(); start++) {
+        const auto substr = str.substr(start, len);
+        substring_count_map[substr]++;
+      }
+    }
+
+    // Find the shortest substring which has occurence count of 1.
+    size_t smallest_size = str.size() + 1;
+    std::string smallest_unique_substr = "";
+    for (const auto& p : substring_count_map) {
+      if (p.second == 1 && p.first.size() < smallest_size) {
+        smallest_unique_substr = p.first;
+        smallest_size = p.first.size();
+      }
+    }
+
+    return smallest_unique_substr;
+  }
+};
+
+TEST_CASE_WITH_DATA(ShortestUniqueSubstringTest, tests, ShortestUniqueSubstringTestData, shortest_unique_substring_tests) {
+  trace << std::endl << "Attempting to find the shortest unique substring in " << std::quoted(data.str) << ":" << std::endl;
+
+  const auto actual = get_shortest_unique_substring(data.str);
+  trace << "Found: " << std::quoted(actual) << " (expected: " << std::quoted(data.expected) << ")" << std::endl;
+  assert.equal(actual, data.expected);
+}
