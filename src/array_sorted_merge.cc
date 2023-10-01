@@ -77,3 +77,137 @@ TEST_CASE_WITH_DATA(SortedArrayMergeTest, tests, SortedArrayMergeTestData, sorte
 
   assert.equal(data.nums1, data.expected);
 }
+
+struct SortedArrayMerge3TestData : TestCaseDataWithExpectedResult<std::vector<int>> {
+  std::vector<int> nums1;
+  std::vector<int> nums2;
+  std::vector<int> nums3;
+};
+
+std::vector<SortedArrayMerge3TestData> sorted_array_merge3_tests = {
+  {std::vector<int>({1,1,2,2,3,5,6,7}), {1,2,3}, {2,5,6}, {1,7}},
+  {std::vector<int>({1,2,2,3,3}), {1}, {2,3}, {2,3}},
+  {std::vector<int>({1}), {1}, {}, {}},
+  {std::vector<int>({}), {}, {}, {}},
+};
+
+class SortedArrayMerge3Test : public TestCase {
+ protected:
+
+  // Merge 3 sorted int arrays into a single array.
+  std::vector<int> merge3(std::vector<int>& nums1, std::vector<int>& nums2, std::vector<int>& nums3) {
+    std::vector<int> result;
+
+    // Keep iterators and flags for each source array to track the
+    // current index we should take from each array and remember
+    // when we've exhausted the elements from the array.
+    auto iter1 = nums1.cbegin();
+    auto iter2 = nums2.cbegin();
+    auto iter3 = nums3.cbegin();
+
+    auto n1_done = iter1 == nums1.cend();
+    auto n2_done = iter2 == nums2.cend();
+    auto n3_done = iter3 == nums3.cend();
+
+    // Use a big dumb set of conditionals to figure out which source
+    // array has the next smallest element.
+    while (!n1_done || !n2_done || !n3_done) {
+      int cur;
+      if (n1_done) {
+        if (n2_done) {
+          // nums1 and nums2 at end. Take from nums3.
+          cur = *iter3;
+          iter3++;
+        } else {
+          if (n3_done) {
+            // nums1 and nums3 at end. Take from nums2.
+            cur = *iter2;
+            iter2++;
+          } else {
+            // nums1 at end. Take min between nums2 and nums3.
+            if (*iter2 < *iter3) {
+              cur = *iter2;
+              iter2++;
+            } else {
+              cur = *iter3;
+              iter3++;
+            }
+          }
+        }
+      } else {
+        if (n2_done) {
+          if (n3_done) {
+            // nums2 and nums3 at end. Take from nums1.
+            cur = *iter1;
+            iter1++;
+          } else {
+            // nums2 at end. Take min between nums1 and nums3.
+            if (*iter1 < *iter3) {
+              cur = *iter1;
+              iter1++;
+            } else {
+              cur = *iter3;
+              iter3++;
+            }
+          }
+        } else {
+          if (n3_done) {
+            // nums3 at end. Take min between nums1 and nums2.
+            if (*iter1 < *iter2) {
+              cur = *iter1;
+              iter1++;
+            } else {
+              cur = *iter2;
+              iter2++;
+            }
+          } else {
+            // No vectors at end. Take min between all three.
+            if (*iter1 < *iter2) {
+              if (*iter1 < *iter3) {
+                cur = *iter1;
+                iter1++;
+              } else {
+                cur = *iter3;
+                iter3++;
+              }
+            } else {
+              if (*iter2 < *iter3) {
+                cur = *iter2;
+                iter2++;
+              } else {
+                cur = *iter3;
+                iter3++;
+              }
+            }
+          }
+        }
+      }
+
+      // It might be preferable to pre-allocate the result vector but
+      // this is probably not the point of the excercise.
+      result.push_back(cur);
+
+      // We moved one of the iterators forward, just reset all the flags.
+      n1_done = iter1 == nums1.cend();
+      n2_done = iter2 == nums2.cend();
+      n3_done = iter3 == nums3.cend();
+    }
+    return result;
+  }
+};
+
+TEST_CASE_WITH_DATA(SortedArrayMerge3Test, tests, SortedArrayMerge3TestData, sorted_array_merge3_tests) {
+  trace << std::endl << "Merging three sorted arrays:" << std::endl;
+  trace << "nums1 = ";
+  trace.vector(data.nums1);
+  trace << "nums2 = ";
+  trace.vector(data.nums2);
+  trace << "nums3 = ";
+  trace.vector(data.nums3);
+
+  const auto result = merge3(data.nums1, data.nums2, data.nums3);
+  trace << "sorted = ";
+  trace.vector(result);
+
+  assert.equal(result, data.expected);
+}
