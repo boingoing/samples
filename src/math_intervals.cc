@@ -224,7 +224,7 @@ int fastest_segment_with_gaps(const Activity& a, int benchmark_distance) {
   // 20 should be at index 2) to the actual index of the trackpoint in the
   // vector. We use this to locate trackopint at distance 20 when the trackpoint
   // at distance 10 is missing, for example.
-  std::map<int, int> trackpoint_index_map;
+  std::map<size_t, size_t> trackpoint_index_map;
   for (size_t i = 0; i < a.trackpoints.size(); i++) {
     const auto expected_idx = a.trackpoints[i].distance / 10;
     trackpoint_index_map[expected_idx] = i;
@@ -238,7 +238,7 @@ int fastest_segment_with_gaps(const Activity& a, int benchmark_distance) {
     }
 
     const auto start_actual_index = iter->second;
-    const int expected_end_index = i + segment_length_in_trackpoints;
+    const auto expected_end_index = i + segment_length_in_trackpoints;
     const auto iter2 = trackpoint_index_map.find(expected_end_index);
     if (iter2 == trackpoint_index_map.cend()) {
       continue;
