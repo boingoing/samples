@@ -18,9 +18,7 @@ class Logger {
   std::stringstream buffer_;
 
  public:
-  std::string getBuffer() const {
-    return buffer_.str();
-  }
+  std::string getBuffer() const;
 
   template <typename T>
   Logger& operator<<(const T& t) {
@@ -28,20 +26,9 @@ class Logger {
     return *this;
   }
 
-  Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
-    f(buffer_);
-    return *this;
-  }
-
-  Logger& operator<<(std::ostream& (*f)(std::ios&)) {
-    f(buffer_);
-    return *this;
-  }
-
-  Logger& operator<<(std::ostream& (*f)(std::ios_base&)) {
-    f(buffer_);
-    return *this;
-  }
+  Logger& operator<<(std::ostream& (*f)(std::ostream&));
+  Logger& operator<<(std::ostream& (*f)(std::ios&));
+  Logger& operator<<(std::ostream& (*f)(std::ios_base&));
 
   template<typename K, typename V>
   void map(const std::unordered_map<K,V>& m) {

@@ -16,19 +16,11 @@ class Assert {
   Logger& trace_;
 
  public:
-  Assert(Logger& trace) : trace_(trace) {}
+  Assert(Logger& trace);
 
-  bool isFailed() {
-    return is_failed_;
-  }
-
-  void resetFailStatus() {
-    is_failed_ = false;
-  }
-
-  void fail() {
-    is_failed_ = true;
-  }
+  bool isFailed();
+  void resetFailStatus();
+  void fail();
 
   template <typename T>
   void equal(const T& actual, const T& expected) {

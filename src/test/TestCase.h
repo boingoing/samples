@@ -24,62 +24,27 @@
 
 class TestCase {
  public:
-  TestCase() : assert(trace) {}
-  virtual ~TestCase() {}
+  TestCase();
+  virtual ~TestCase() = default;
 
   virtual std::string getName() const = 0;
   virtual std::string getBaseClassName() const = 0;
   virtual std::string getFullName() const = 0;
   virtual size_t getTestCaseCount() const = 0;
 
-  std::string getBuffer() const {
-    return trace.getBuffer();
-  }
+  std::string getBuffer() const;
+  TestResult getResult() const;
+  void setResult(TestResult result);
+  const TestCaseStats& getStats() const;
+  TestCaseFlag getFlags() const;
+  void setFlags(TestCaseFlag add);
 
-  TestResult getResult() const {
-    return result_;
-  }
-
-  void setResult(TestResult result) {
-    result_ = result;
-  }
-
-  const TestCaseStats& getStats() const {
-    return stats_;
-  }
-
-  TestCaseFlag getFlags() const {
-    return flags_;
-  }
-
-  void setFlags(TestCaseFlag add) {
-    flags_ |= add;
-  }
-
-  TestResult run() {
-    if ((getFlags() & TestCaseFlag::Disabled) == TestCaseFlag::Disabled) {
-      setResult(TestResult::Disabled);
-    } else if ((getFlags() & TestCaseFlag::Skip) == TestCaseFlag::Skip) {
-      setResult(TestResult::Skip);
-    } else if ((getFlags() & TestCaseFlag::ExpectPass) == TestCaseFlag::ExpectPass) {
-      assert.resetFailStatus();
-      runImpl();
-      if (assert.isFailed()) {
-        setResult(TestResult::Fail);
-      } else {
-        setResult(TestResult::Pass);
-      }
-    }
-    aggregate(getResult());
-    return getResult();
-  }
+  TestResult run();
 
  protected:
   virtual void runImpl() = 0;
 
-  void aggregate(TestResult result) {
-    stats_.aggregate(result);
-  }
+  void aggregate(TestResult result);
 
  private:
   TestResult result_;

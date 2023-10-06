@@ -6,6 +6,8 @@
 #ifndef __test_Constants_h__
 #define __test_Constants_h__
 
+#include <cstdint>
+
 enum class TestResult : uint8_t {
   Pass = 0,
   Fail,

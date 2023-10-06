@@ -12,7 +12,12 @@ project (samples)
 include_directories (${PROJECT_SOURCE_DIR}/src)
 
 set (TEST_LIB_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/test/Assert.cc
   ${PROJECT_SOURCE_DIR}/src/test/Constants.cc
+  ${PROJECT_SOURCE_DIR}/src/test/Logger.cc
+  ${PROJECT_SOURCE_DIR}/src/test/Stopwatch.cc
+  ${PROJECT_SOURCE_DIR}/src/test/TestCase.cc
+  ${PROJECT_SOURCE_DIR}/src/test/TestCaseStats.cc
   ${PROJECT_SOURCE_DIR}/src/test/TestCaseContainer.cc)
 add_library (test_lib STATIC ${TEST_LIB_SOURCES})
 

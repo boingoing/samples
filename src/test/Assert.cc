@@ -3,20 +3,21 @@
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 //-------------------------------------------------------------------------------------------------------
 
-#ifndef __test_TestCaseStats_h__
-#define __test_TestCaseStats_h__
+#include <string>
 
-#include "test/Constants.h"
+#include "test/Assert.h"
+#include "test/Logger.h"
 
-struct TestCaseStats {
-  size_t run_count;
-  size_t pass_count;
-  size_t fail_count;
-  size_t skip_count;
-  size_t disable_count;
+Assert::Assert(Logger& trace) : trace_(trace) {}
 
-  void aggregate(TestResult result);
-  const TestCaseStats& operator+=(const TestCaseStats& rhs);
-};
+bool Assert::isFailed() {
+  return is_failed_;
+}
 
-#endif  // __test_TestCaseStats_h__
+void Assert::resetFailStatus() {
+  is_failed_ = false;
+}
+
+void Assert::fail() {
+  is_failed_ = true;
+}
