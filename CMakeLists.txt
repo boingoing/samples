@@ -64,6 +64,7 @@ set (RUNNER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
   ${PROJECT_SOURCE_DIR}/src/math_intervals.cc
   ${PROJECT_SOURCE_DIR}/src/math_make_change.cc
+  ${PROJECT_SOURCE_DIR}/src/math_points_bounding_box.cc
   ${PROJECT_SOURCE_DIR}/src/random_select.cc
   ${PROJECT_SOURCE_DIR}/src/runner.cc
   ${PROJECT_SOURCE_DIR}/src/string_find_word_under_cursor.cc
