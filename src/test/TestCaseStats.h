@@ -6,6 +6,8 @@
 #ifndef __test_TestCaseStats_h__
 #define __test_TestCaseStats_h__
 
+#include <cstddef>
+
 #include "test/Constants.h"
 
 struct TestCaseStats {
