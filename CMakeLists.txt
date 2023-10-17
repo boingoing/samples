@@ -62,6 +62,7 @@ set (RUNNER_SOURCES
   ${PROJECT_SOURCE_DIR}/src/hashmap_redis.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_sequence.cc
   ${PROJECT_SOURCE_DIR}/src/hashmap_strings.cc
+  ${PROJECT_SOURCE_DIR}/src/math_digits.cc
   ${PROJECT_SOURCE_DIR}/src/math_intervals.cc
   ${PROJECT_SOURCE_DIR}/src/math_make_change.cc
   ${PROJECT_SOURCE_DIR}/src/math_points_bounding_box.cc
